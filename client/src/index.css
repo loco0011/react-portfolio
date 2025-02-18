@@ -11,3 +11,22 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .animate-gradient-xy {
+    animation: gradient-xy 15s ease infinite;
+    background-size: 400% 400%;
+  }
+
+  @keyframes gradient-xy {
+    0% {
+      background-position: 0% 0%;
+    }
+    50% {
+      background-position: 100% 100%;
+    }
+    100% {
+      background-position: 0% 0%;
+    }
+  }
+}

@@ -1,6 +1,13 @@
 import { motion } from "framer-motion";
 import { FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
 
+const roles = [
+  "Software Development Engineer",
+  "Full Stack Developer",
+  "Problem Solver",
+  "Tech Enthusiast"
+];
+
 export default function Hero() {
   return (
     <section className="min-h-screen flex flex-col justify-center items-center relative overflow-hidden" id="hero">
@@ -39,25 +46,40 @@ export default function Hero() {
         </motion.h1>
 
         <motion.div
-          className="relative h-20 mb-12"
+          className="h-20 mb-12 overflow-hidden"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
         >
-          <motion.p
-            className="text-2xl md:text-3xl absolute inset-0 flex items-center justify-center"
-            animate={{
-              rotateX: [0, 360],
-              opacity: [1, 0.5, 1],
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          >
-            Software Development Engineer
-          </motion.p>
+          {roles.map((role, index) => (
+            <motion.div
+              key={index}
+              initial={{ y: 80 }}
+              animate={{ y: 0 }}
+              transition={{
+                delay: 0.6 + index * 0.1,
+                duration: 0.8,
+                type: "spring",
+                stiffness: 100
+              }}
+              className="text-2xl md:text-3xl font-medium"
+            >
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 1, 1, 0] }}
+                transition={{
+                  times: [0, 0.2, 0.8, 1],
+                  duration: 4,
+                  delay: index * 4,
+                  repeat: Infinity,
+                  repeatDelay: roles.length * 4 - 4
+                }}
+                className="inline-block"
+              >
+                {role}
+              </motion.span>
+            </motion.div>
+          ))}
         </motion.div>
 
         <motion.div

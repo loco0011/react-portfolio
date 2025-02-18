@@ -5,12 +5,12 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --background-gradient: linear-gradient(to bottom, #1e8359, #000000);
+    --background-gradient: linear-gradient(to bottom, #f0f9ff, #e0f2fe, #bfdbfe);
   }
 
   .dark {
     --background: 0 0% 0%;
-    --background-gradient: linear-gradient(to bottom, #002057, #000000);
+    --background-gradient: linear-gradient(to bottom, #1e1b4b, #312e81, #000000);
   }
 
   * {
@@ -50,5 +50,9 @@
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500;
   }
 }

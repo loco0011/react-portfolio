@@ -11,7 +11,7 @@ const roles = [
 export default function Hero() {
   return (
     <section className="min-h-screen flex flex-col justify-center items-center relative overflow-hidden" id="hero">
-      {/* Animated background gradient */}
+      {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-purple-500/20 animate-gradient-xy" />
 
       {/* Animated blob */}
@@ -45,12 +45,7 @@ export default function Hero() {
           Hi, I'm Sambit Maity
         </motion.h1>
 
-        <motion.div
-          className="h-20 mb-12 font-mono"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-        >
+        <div className="h-20 mb-12 flex items-center justify-center">
           {roles.map((role, index) => (
             <motion.div
               key={index}
@@ -60,9 +55,14 @@ export default function Hero() {
                 delay: index * 4,
                 duration: 0.5
               }}
-              className="relative h-20"
+              className="absolute code-container"
+              style={{ 
+                opacity: index === 0 ? 1 : 0,
+                transform: 'translateY(-50%)',
+                top: '50%'
+              }}
             >
-              <motion.span
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: [0, 1, 1, 0] }}
                 transition={{
@@ -72,13 +72,13 @@ export default function Hero() {
                   repeat: Infinity,
                   repeatDelay: roles.length * 4 - 4
                 }}
-                className="absolute inset-0 flex items-center justify-center typing-effect text-xl md:text-2xl text-text-primary"
+                className="typing-effect"
               >
                 {role}
-              </motion.span>
+              </motion.div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
 
         <motion.div
           className="flex gap-8 justify-center items-center"

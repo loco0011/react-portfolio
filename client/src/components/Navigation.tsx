@@ -5,11 +5,10 @@ import { Menu, X } from "lucide-react";
 
 const navItems = [
   { label: "Home", href: "#hero" },
-  { label: "About", href: "#about" },
+  { label: "Experience", href: "#experience" },
   { label: "Skills", href: "#skills" },
   { label: "Projects", href: "#projects" },
-  { label: "Education", href: "#education" },
-  { label: "Contact", href: "#contact" }
+  { label: "Education", href: "#education" }
 ];
 
 export default function Navigation() {
@@ -29,28 +28,29 @@ export default function Navigation() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 100 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b"
+        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/10"
       >
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <motion.span
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-xl font-bold"
+            className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500"
           >
             SM
           </motion.span>
 
-          <div className="hidden md:flex gap-6">
+          <div className="hidden md:flex gap-8">
             {navItems.map((item, index) => (
               <motion.button
                 key={item.href}
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="text-sm font-medium hover:text-primary transition-colors"
+                className="text-sm font-medium hover:text-primary transition-colors relative group"
                 onClick={() => scrollToSection(item.href)}
               >
                 {item.label}
+                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform" />
               </motion.button>
             ))}
           </div>
@@ -69,20 +69,23 @@ export default function Navigation() {
       {/* Mobile Menu */}
       {isOpen && (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-40 bg-background md:hidden pt-16"
+          initial={{ opacity: 0, x: -100 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -100 }}
+          className="fixed inset-0 z-40 backdrop-blur-lg pt-16 bg-background/90"
         >
-          <div className="flex flex-col items-center gap-4 p-4">
-            {navItems.map((item) => (
-              <button
+          <div className="flex flex-col items-center gap-6 p-4">
+            {navItems.map((item, index) => (
+              <motion.button
                 key={item.href}
-                className="w-full py-2 text-center hover:text-primary transition-colors"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="w-full py-3 text-center text-lg font-medium hover:text-primary transition-colors"
                 onClick={() => scrollToSection(item.href)}
               >
                 {item.label}
-              </button>
+              </motion.button>
             ))}
           </div>
         </motion.div>

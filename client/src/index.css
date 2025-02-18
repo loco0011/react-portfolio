@@ -5,12 +5,14 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --background-gradient: linear-gradient(to bottom, #f0f9ff, #e0f2fe, #bfdbfe);
+    --background-gradient: linear-gradient(to bottom, #1e8359, #000000);
+    --foreground: 222.2 84% 4.9%;
   }
 
   .dark {
     --background: 0 0% 0%;
     --background-gradient: linear-gradient(to bottom, #1e1b4b, #312e81, #000000);
+    --foreground: 210 40% 98%;
   }
 
   * {
@@ -20,7 +22,21 @@
   body {
     @apply font-sans antialiased;
     background: var(--background-gradient);
-    color: white;
+    color: var(--foreground);
+  }
+
+  .light {
+    --text-primary: #000000;
+    --text-secondary: #1f2937;
+    --bg-gradient-start: #ffffff;
+    --bg-gradient-end: #f3f4f6;
+  }
+
+  .dark {
+    --text-primary: #ffffff;
+    --text-secondary: #e5e7eb;
+    --bg-gradient-start: #1e1b4b;
+    --bg-gradient-end: #000000;
   }
 }
 
@@ -54,5 +70,9 @@
 
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500;
+  }
+
+  .section-bg {
+    @apply bg-gradient-to-b from-bg-gradient-start to-bg-gradient-end;
   }
 }

@@ -5,14 +5,14 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --background-gradient: linear-gradient(to bottom, #1e8359, #000000);
     --foreground: 222.2 84% 4.9%;
+    --background-gradient: linear-gradient(to bottom, #ffffff, #f8fafc, #f1f5f9);
   }
 
   .dark {
     --background: 0 0% 0%;
-    --background-gradient: linear-gradient(to bottom, #1e1b4b, #312e81, #000000);
     --foreground: 210 40% 98%;
+    --background-gradient: linear-gradient(to bottom, #1e1b4b, #312e81, #000000);
   }
 
   * {
@@ -26,10 +26,10 @@
   }
 
   .light {
-    --text-primary: #000000;
-    --text-secondary: #1f2937;
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
     --bg-gradient-start: #ffffff;
-    --bg-gradient-end: #f3f4f6;
+    --bg-gradient-end: #f1f5f9;
   }
 
   .dark {
@@ -74,5 +74,21 @@
 
   .section-bg {
     @apply bg-gradient-to-b from-bg-gradient-start to-bg-gradient-end;
+  }
+
+  @keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+  }
+
+  @keyframes blink {
+    50% { border-color: transparent }
+  }
+
+  .typing-effect {
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 3px solid;
+    animation: typing 3.5s steps(40, end), blink .75s step-end infinite;
   }
 }

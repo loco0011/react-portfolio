@@ -2,10 +2,10 @@ import { motion } from "framer-motion";
 import { FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
 
 const roles = [
-  "Software Development Engineer",
-  "Full Stack Developer",
-  "Problem Solver",
-  "Tech Enthusiast"
+  "console.log('Software Development Engineer');",
+  "function() { return 'Full Stack Developer'; }",
+  "while(true) { solve('Problems'); }",
+  "import { success } from 'tech-enthusiasm';"
 ];
 
 export default function Hero() {
@@ -46,7 +46,7 @@ export default function Hero() {
         </motion.h1>
 
         <motion.div
-          className="h-20 mb-12 overflow-hidden"
+          className="h-20 mb-12 font-mono"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
@@ -54,15 +54,13 @@ export default function Hero() {
           {roles.map((role, index) => (
             <motion.div
               key={index}
-              initial={{ y: 80 }}
-              animate={{ y: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               transition={{
-                delay: 0.6 + index * 0.1,
-                duration: 0.8,
-                type: "spring",
-                stiffness: 100
+                delay: index * 4,
+                duration: 0.5
               }}
-              className="text-2xl md:text-3xl font-medium"
+              className="relative h-20"
             >
               <motion.span
                 initial={{ opacity: 0 }}
@@ -74,7 +72,7 @@ export default function Hero() {
                   repeat: Infinity,
                   repeatDelay: roles.length * 4 - 4
                 }}
-                className="inline-block"
+                className="absolute inset-0 flex items-center justify-center typing-effect text-xl md:text-2xl text-text-primary"
               >
                 {role}
               </motion.span>

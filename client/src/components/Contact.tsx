@@ -122,14 +122,20 @@ export default function Contact() {
               >
                 <Button
                   type="submit"
-                  className="group relative overflow-hidden px-6 py-3"
+                  className="group relative overflow-hidden px-6 py-3 bg-background/10 hover:bg-background/20 transition-colors"
                   size="lg"
                 >
                   <span className="relative z-10 flex items-center gap-2">
                     <span>Send Message</span>
                     <Send className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                   </span>
-                  <div className="absolute inset-0 bg-primary/20 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
+                  <motion.div
+                    className="absolute inset-0 bg-primary/20"
+                    whileHover={{ scale: [null, 1.2, 1] }}
+                    transition={{
+                      duration: 0.3
+                    }}
+                  />
                 </Button>
               </motion.div>
             </form>

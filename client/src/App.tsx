@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import CustomCursor from "@/components/CustomCursor";
+import EasterEggGame from "@/components/EasterEggGame";
 
 function Router() {
   return (
@@ -20,6 +21,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <CustomCursor />
       <Router />
+      <EasterEggGame />
       <Toaster />
     </QueryClientProvider>
   );

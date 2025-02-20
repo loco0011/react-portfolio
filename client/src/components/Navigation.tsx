@@ -28,7 +28,7 @@ export default function Navigation() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 100 }}
-        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/10"
+        className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b dark:border-white/10"
       >
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <motion.span
@@ -46,7 +46,7 @@ export default function Navigation() {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="text-sm font-medium hover:text-primary transition-colors relative group"
+                className="text-sm header-text font-medium hover:text-primary transition-colors relative group"
                 onClick={() => scrollToSection(item.href)}
               >
                 {item.label}

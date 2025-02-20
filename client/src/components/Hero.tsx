@@ -1,18 +1,49 @@
-import { motion } from "framer-motion";
-import { FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
+"use client"
+
+import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
+import { FiGithub, FiLinkedin, FiMail } from "react-icons/fi"
 
 const roles = [
   "console.log('Software Development Engineer');",
   "function() { return 'Full Stack Developer'; }",
   "while(true) { solve('Problems'); }",
-  "import { success } from 'tech-enthusiasm';"
-];
+  "import { success } from 'tech-enthusiasm';",
+]
 
 export default function Hero() {
+  const [currentRoleIndex, setCurrentRoleIndex] = useState(0)
+  const [displayedText, setDisplayedText] = useState("")
+  const [isTypingComplete, setIsTypingComplete] = useState(false)
+
+  useEffect(() => {
+    if (currentRoleIndex >= roles.length) {
+      setCurrentRoleIndex(0)
+      return
+    }
+
+    const currentRole = roles[currentRoleIndex]
+
+    if (displayedText.length < currentRole.length) {
+      const timeoutId = setTimeout(() => {
+        setDisplayedText(currentRole.slice(0, displayedText.length + 1))
+      }, 50) // Adjust typing speed here
+      return () => clearTimeout(timeoutId)
+    } else {
+      setIsTypingComplete(true)
+      const timeoutId = setTimeout(() => {
+        setIsTypingComplete(false)
+        setDisplayedText("")
+        setCurrentRoleIndex((prevIndex) => prevIndex + 1)
+      }, 2000) // Wait time before moving to next role
+      return () => clearTimeout(timeoutId)
+    }
+  }, [currentRoleIndex, displayedText])
+
   return (
     <section className="min-h-screen flex flex-col justify-center items-center relative overflow-hidden" id="hero">
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-purple-500/20 animate-gradient-xy" />
+      <div className="absolute blink inset-0 bg-gradient-to-b from-background via-primary/5 to-background" />
 
       {/* Animated blob */}
       <div className="absolute inset-0 flex items-center justify-center">
@@ -23,8 +54,8 @@ export default function Hero() {
           }}
           transition={{
             duration: 20,
-            repeat: Infinity,
-            ease: "linear"
+            repeat: Number.POSITIVE_INFINITY,
+            ease: "linear",
           }}
           className="w-[500px] h-[500px] rounded-full bg-primary/20 filter blur-3xl"
         />
@@ -36,48 +67,37 @@ export default function Hero() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
       >
-        <motion.h1 
-          className="text-6xl md:text-7xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500"
+        <motion.h1
+          className="text-6xl md:text-7xl font-bold mb-8 bg-clip-text title-gradient"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          Hi, I'm Sambit Maity
+          Hi, I'm Sambit
         </motion.h1>
 
         <div className="h-20 mb-12 flex items-center justify-center">
-          {roles.map((role, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+          <motion.div
+            key={currentRoleIndex}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="relative font-mono dark:text-white text-xl"
+          >
+            {displayedText}
+            <motion.span
+              animate={{ opacity: isTypingComplete ? [0, 1] : 0 }}
               transition={{
-                delay: index * 4,
-                duration: 0.5
+                duration: 0.5,
+                repeat: isTypingComplete ? Number.POSITIVE_INFINITY : 0,
+                repeatType: "reverse",
               }}
-              className="absolute code-container"
-              style={{ 
-                opacity: index === 0 ? 1 : 0,
-                transform: 'translateY(-50%)',
-                top: '50%'
-              }}
+              className="absolute"
             >
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 1, 1, 0] }}
-                transition={{
-                  times: [0, 0.2, 0.8, 1],
-                  duration: 4,
-                  delay: index * 4,
-                  repeat: Infinity,
-                  repeatDelay: roles.length * 4 - 4
-                }}
-                className="typing-effect"
-              >
-                {role}
-              </motion.div>
-            </motion.div>
-          ))}
+              |
+            </motion.span>
+          </motion.div>
         </div>
 
         <motion.div
@@ -108,11 +128,7 @@ export default function Hero() {
             <div className="absolute inset-0 bg-primary/10 rounded-full scale-0 group-hover:scale-100 transition-transform" />
           </motion.a>
 
-          <motion.a
-            href="mailto:contact@example.com"
-            className="group relative p-4"
-            whileHover={{ scale: 1.1 }}
-          >
+          <motion.a href="mailto:contact@example.com" className="group relative p-4" whileHover={{ scale: 1.1 }}>
             <FiMail className="text-3xl group-hover:text-primary transition-colors z-10 relative" />
             <div className="absolute inset-0 bg-primary/10 rounded-full scale-0 group-hover:scale-100 transition-transform" />
           </motion.a>
@@ -120,15 +136,15 @@ export default function Hero() {
       </motion.div>
 
       {/* Scroll indicator */}
-      <motion.div 
+      <motion.div
         className="absolute bottom-8 left-1/2 -translate-x-1/2"
         animate={{
           y: [0, 10, 0],
         }}
         transition={{
           duration: 2,
-          repeat: Infinity,
-          ease: "easeInOut"
+          repeat: Number.POSITIVE_INFINITY,
+          ease: "easeInOut",
         }}
       >
         <div className="w-6 h-10 rounded-full border-2 border-primary flex justify-center">
@@ -136,5 +152,6 @@ export default function Hero() {
         </div>
       </motion.div>
     </section>
-  );
+  )
 }
+

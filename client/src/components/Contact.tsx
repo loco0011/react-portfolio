@@ -44,7 +44,7 @@ export default function Contact() {
         transition={{ duration: 0.8 }}
         className="max-w-4xl mx-auto relative z-10"
       >
-        <h2 className="text-5xl font-bold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500">
+        <h2 className="text-5xl font-bold mb-12 text-center bg-clip-text text-transparent heading-gradient">
           Let's Connect
         </h2>
 
@@ -54,7 +54,7 @@ export default function Contact() {
           viewport={{ once: true }}
           transition={{ duration: 0.8, type: "spring" }}
         >
-          <Card className="backdrop-blur-sm bg-background/50 border-primary/20 
+          <Card className="backdrop-blur-sm bg-background/50 border-primary/20
                           hover:shadow-lg hover:shadow-primary/20 transition-all duration-300">
             <CardContent className="p-8">
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -121,7 +121,7 @@ export default function Contact() {
                   viewport={{ once: true }}
                   className="flex justify-end"
                 >
-                  <Button
+                <Button
                     type="submit"
                     className="group relative overflow-hidden px-6 py-3 bg-background/10 hover:bg-background/20 transition-colors"
                     size="lg"
@@ -131,7 +131,7 @@ export default function Contact() {
                       <Send className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                     </span>
                     <motion.div
-                      className="absolute inset-0 bg-primary/20"
+                      className="absolute inset-0 bg-primary/20 gradient-bg"
                       whileHover={{ scale: [null, 1.2, 1] }}
                       transition={{
                         duration: 0.3

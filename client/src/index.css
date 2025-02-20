@@ -12,8 +12,17 @@
   .dark {
     --background: 0 0% 0%;
     --foreground: 210 40% 98%;
-    --background-gradient: linear-gradient(to bottom, #1e1b4b, #312e81, #000000);
+    --background-gradient: linear-gradient(to bottom, #0e0c22, #191836, #000000);
   }
+
+  .light .gradient-bg {
+    background: linear-gradient(to bottom, #281e4e, #0a0a0a);
+  }
+  .gradient-bg {
+    background: linear-gradient(to bottom, #281e4e, #0a0a0a);
+  }
+
+
 
   * {
     @apply border-border;
@@ -26,8 +35,8 @@
   }
 
   .light {
-    --text-primary: #0f172a;
-    --text-secondary: #334155;
+    --text-primary: #000000;
+    --text-secondary: #000408;
     --bg-gradient-start: #ffffff;
     --bg-gradient-end: #f1f5f9;
   }
@@ -38,6 +47,10 @@
     --bg-gradient-start: #1e1b4b;
     --bg-gradient-end: #000000;
   }
+}
+
+.header-text{
+  @apply text-black dark:text-white;
 }
 
 @layer utilities {
@@ -71,6 +84,18 @@
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500;
   }
+  .dark .title-gradient{
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500;
+  }
+  .light .title-gradient{
+    @apply bg-clip-text text-transparent bg-gradient-to-b from-purple-500 to-black;
+  }
+  .light .heading-gradient{
+    @apply bg-clip-text text-transparent bg-gradient-to-b from-primary to-black;
+  }
+  .heading-gradient{
+    @apply bg-clip-text text-transparent bg-gradient-to-b from-primary;
+  }
 
   .section-bg {
     @apply bg-gradient-to-b from-bg-gradient-start to-bg-gradient-end;
@@ -101,7 +126,7 @@
     margin: 0 auto;
     letter-spacing: 0.15em;
     border-right: 0.15em solid currentColor;
-    animation: 
+    animation:
       typing 3.5s steps(40, end),
       blink 0.75s step-end infinite;
   }
@@ -112,4 +137,10 @@
     animation: blink 0.75s step-end infinite;
     margin-left: 0.1em;
   }
+}
+.dark .exp-bg {
+  @apply bg-gray-800 bg-opacity-80;
+}
+.light .exp-bg {
+  @apply bg-gray-300 bg-opacity-60;
 }

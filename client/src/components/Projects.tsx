@@ -63,7 +63,7 @@ export default function Projects() {
         transition={{ duration: 0.8 }}
         className="max-w-6xl mx-auto relative z-10"
       >
-        <h2 className="text-5xl font-bold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500">
+        <h2 className="text-5xl font-bold mb-12 text-center bg-clip-text text-transparent heading-gradient">
           Featured Projects
         </h2>
 
@@ -77,10 +77,10 @@ export default function Projects() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.2 }}
             >
-              <Card className="h-full backdrop-blur-sm bg-background/50 border-primary/20 
+              <Card className="h-full backdrop-blur-sm bg-background/50 border-primary/20
                              hover:shadow-lg hover:shadow-primary/20 transition-all duration-300">
                 <CardHeader>
-                  <CardTitle className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500">
+                  <CardTitle className="bg-clip-text bg-gradient-to-r from-primary to-purple-500">
                     {project.title}
                   </CardTitle>
                 </CardHeader>
@@ -149,7 +149,7 @@ export default function Projects() {
             <Button
               onClick={() => setShowAll(true)}
               size="lg"
-              className="relative group overflow-hidden"
+              className="relative group gradient-bg overflow-hidden"
             >
               <span className="relative z-10">Load More Projects</span>
               <div className="absolute inset-0 bg-primary/20 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />

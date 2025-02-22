@@ -1,50 +1,64 @@
-"use client"
-
-import { motion } from "framer-motion"
-import { Card, CardContent } from "@/components/ui/card"
-import { useState } from "react"
+import { motion } from "framer-motion";
+import { Card, CardContent } from "@/components/ui/card";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "../lib/api"; // Adjust the import path to match your project structure
+import { Loader2 } from "lucide-react"; // For loading state
 
 interface Experience {
-  year: string
-  title: string
-  company: string
-  description: string
-  tech: string[]
-  achievements: string[]
+  duraion: string;
+  title: string;
+  company: string;
+  description: string;
+  tech: string[];
+  achievements: string[];
 }
 
-const experiences: Experience[] = [
-  {
-    year:  "March 2024 - Present",
-    title: "Software Development Engineer",
-    company: "Spiral Compute",
-    description: "Full-stack development with modern technologies",
-    tech: ["Laravel","Node.js", "React", "TypeScript", "Docker"],
-    achievements: [
-      "Developed and optimized scalable backend APIs, improving system efficiency",
-      "Built reusable React components, improving frontend consistency and maintainability",
-      "Worked closely with clients to understand requirements, ensuring 100% project satisfaction",
-    ],
-  },
-  {
-    year: "July 2023 - February 2024",
-    title: "Junior Web Developer",
-    company: "Previous Company",
-    description: "Leading web development",
-    tech: ["PhP", "MySql", "JavaScript"],
-    achievements: [
-      "Built real-time analytics dashboard",
-      "Optimized database queries improving performance by 30%",
-      "Collaborated with cross-functional teams to deliver high-impact features"
-    ],
-  },
-]
-
 export default function Experience() {
-  const [activeIndex, setActiveIndex] = useState<number | null>(null)
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+  // Fetch experiences data
+  const {
+    data: experiences,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["experiences"],
+    queryFn: api.getExperiences, // Use the API function to fetch experiences
+  });
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // Show error state
+  if (isError) {
+    return (
+      <div className="text-center text-red-500 py-20">
+        Failed to load experiences. Please try again later.
+      </div>
+    );
+  }
+
+  // Handle empty state
+  if (!experiences || experiences.length === 0) {
+    return (
+      <div className="text-center text-gray-500 py-20">
+        No experiences found.
+      </div>
+    );
+  }
 
   return (
-    <section className="py-20 px-4 md:px-8 relative overflow-hidden min-h-screen" id="experience">
+    <section
+      className="py-20 px-4 md:px-8 relative overflow-hidden min-h-screen"
+      id="experience"
+    >
       {/* Background gradient */}
       <div className="absolute blink inset-0 bg-gradient-to-b from-background via-primary/5 to-background" />
 
@@ -64,7 +78,7 @@ export default function Experience() {
 
           {experiences.map((exp, index) => (
             <motion.div
-              key={index}
+              key={exp.id} // Use exp.id as the key
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -79,7 +93,9 @@ export default function Experience() {
                 >
                   <div
                     className="w-8 h-8 rounded-full bg-primary flex items-center justify-center cursor-pointer"
-                    onClick={() => setActiveIndex(index === activeIndex ? null : index)}
+                    onClick={() =>
+                      setActiveIndex(index === activeIndex ? null : index)
+                    }
                   >
                     <div className="w-4 h-4 rounded-full bg-background" />
                   </div>
@@ -101,24 +117,40 @@ export default function Experience() {
                           <motion.h3 className="text-2xl font-bold mb-2 bg-clip-text bg-gradient-to-r from-primary to-purple-500">
                             {exp.title}
                           </motion.h3>
-                          <p className="text-lg mb-4 text-gray-800 dark:text-white/80">{exp.company} <span className="text-sm">({exp.year})</span></p>
-                          <p className="text-gray-600 dark:text-white/60 mb-6">{exp.description}</p>
+                          <p className="text-lg text-gray-800 dark:text-white/90">
+                            {exp.company}{" "}
+                            <span className="text-sm dark:text-white/70">({exp.duration})</span>
+                          </p>
+                          <p className="text-lg mb-4 text-gray-800 dark:text-white/80">
+                            <span className="text-sm">{exp.location}</span>
+                          </p>
+                          <p className="text-gray-600 dark:text-white/60 mb-6">
+                            {exp.description}
+                          </p>
 
                           <div className="flex flex-wrap gap-2 mb-4">
-                            {exp.tech.map((tech, i) => (
-                              <span
-                                key={i}
-                                className="px-3 py-1 rounded-full text-sm bg-primary/20 text-gray-800 dark:text-white/90"
-                              >
-                                {tech}
-                              </span>
-                            ))}
+                            {exp.tech?.map(
+                              (
+                                tech,i // Use optional chaining
+                              ) => (
+                                <span
+                                  key={i}
+                                  className="px-3 py-1 rounded-full text-sm bg-primary/20 text-gray-800 dark:text-white/90"
+                                >
+                                  {tech}
+                                </span>
+                              )
+                            ) ?? []}{" "}
+                            {/* Fallback to an empty array */}
                           </div>
                         </div>
 
                         <motion.div
                           initial={{ opacity: 0, x: 20 }}
-                          animate={{ opacity: activeIndex === index ? 1 : 0.7, x: 0 }}
+                          animate={{
+                            opacity: activeIndex === index ? 1 : 0.7,
+                            x: 0,
+                          }}
                           className="space-y-4"
                         >
                           <h4 className="font-bold text-lg mb-4 text-foreground/90 dark:text-white/90">
@@ -133,7 +165,9 @@ export default function Experience() {
                               className="flex items-center gap-3"
                             >
                               <div className="w-2 h-2 rounded-full bg-foreground/90" />
-                              <p className="text-foreground/90 dark:text-white/70">{achievement}</p>
+                              <p className="text-foreground/90 dark:text-white/70">
+                                {achievement}
+                              </p>
                             </motion.div>
                           ))}
                         </motion.div>
@@ -147,6 +181,5 @@ export default function Experience() {
         </div>
       </motion.div>
     </section>
-  )
+  );
 }
-

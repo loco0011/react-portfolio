@@ -1,47 +1,86 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { FiGithub, FiLinkedin, FiMail } from "react-icons/fi"
-
-const roles = [
-  "console.log('Software Development Engineer');",
-  "function() { return 'Full Stack Developer'; }",
-  "while(true) { solve('Problems'); }",
-  "import { success } from 'tech-enthusiasm';",
-]
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
+import { api } from "../lib/api"; // Import the API functions
 
 export default function Hero() {
-  const [currentRoleIndex, setCurrentRoleIndex] = useState(0)
-  const [displayedText, setDisplayedText] = useState("")
-  const [isTypingComplete, setIsTypingComplete] = useState(false)
+  const [profile, setProfile] = useState(null); // State to store profile data
+  const [isLoading, setIsLoading] = useState(true); // Loading state
+  const [isError, setIsError] = useState(false); // Error state
 
+  const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
+  const [displayedText, setDisplayedText] = useState("");
+  const [isTypingComplete, setIsTypingComplete] = useState(false);
+
+  // Fetch profile data from the API
   useEffect(() => {
-    if (currentRoleIndex >= roles.length) {
-      setCurrentRoleIndex(0)
-      return
+    const fetchProfile = async () => {
+      try {
+        const data = await api.getProfile(); // Fetch profile data
+        setProfile(data); // Set the fetched profile data
+        setIsLoading(false); // Data fetching is complete
+      } catch (error) {
+        console.error("Failed to fetch profile data:", error);
+        setIsError(true); // Set error state
+        setIsLoading(false); // Data fetching is complete (with error)
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  // Typing effect logic
+  useEffect(() => {
+    if (!profile || !profile.title) return; // Don't run the effect if profile or title is not fetched yet
+
+    if (currentRoleIndex >= profile.title.length) {
+      setCurrentRoleIndex(0);
+      return;
     }
 
-    const currentRole = roles[currentRoleIndex]
+    const currentRole = profile.title[currentRoleIndex];
 
     if (displayedText.length < currentRole.length) {
       const timeoutId = setTimeout(() => {
-        setDisplayedText(currentRole.slice(0, displayedText.length + 1))
-      }, 50) // Adjust typing speed here
-      return () => clearTimeout(timeoutId)
+        setDisplayedText(currentRole.slice(0, displayedText.length + 1));
+      }, 50); // Adjust typing speed here
+      return () => clearTimeout(timeoutId);
     } else {
-      setIsTypingComplete(true)
+      setIsTypingComplete(true);
       const timeoutId = setTimeout(() => {
-        setIsTypingComplete(false)
-        setDisplayedText("")
-        setCurrentRoleIndex((prevIndex) => prevIndex + 1)
-      }, 2000) // Wait time before moving to next role
-      return () => clearTimeout(timeoutId)
+        setIsTypingComplete(false);
+        setDisplayedText("");
+        setCurrentRoleIndex((prevIndex) => prevIndex + 1);
+      }, 2000); // Wait time before moving to next role
+      return () => clearTimeout(timeoutId);
     }
-  }, [currentRoleIndex, displayedText])
+  }, [currentRoleIndex, displayedText, profile]);
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" />
+      </div>
+    );
+  }
+
+  // Show error state
+  if (isError) {
+    return (
+      <div className="text-center text-red-500 py-20">
+        Failed to load profile data. Please try again later.
+      </div>
+    );
+  }
 
   return (
-    <section className="min-h-screen flex flex-col justify-center items-center relative overflow-hidden" id="hero">
+    <section
+      className="min-h-screen flex flex-col justify-center items-center relative overflow-hidden"
+      id="hero"
+    >
       {/* Background gradient */}
       <div className="absolute blink inset-0 bg-gradient-to-b from-background via-primary/5 to-background" />
 
@@ -73,7 +112,7 @@ export default function Hero() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          Hi, I'm Sambit
+          Hi, I'm {profile?.full_name || "Sambit"}
         </motion.h1>
 
         <div className="h-20 mb-12 flex items-center justify-center">
@@ -107,7 +146,7 @@ export default function Hero() {
           transition={{ delay: 0.6 }}
         >
           <motion.a
-            href="https://github.com"
+            href={profile?.github || "https://github.com/loco0011"}
             target="_blank"
             rel="noopener noreferrer"
             className="group relative p-4"
@@ -118,7 +157,7 @@ export default function Hero() {
           </motion.a>
 
           <motion.a
-            href="https://linkedin.com"
+            href={profile?.linkedin || "https://www.linkedin.com/in/sambitmaity/"}
             target="_blank"
             rel="noopener noreferrer"
             className="group relative p-4"
@@ -128,7 +167,11 @@ export default function Hero() {
             <div className="absolute inset-0 bg-primary/10 rounded-full scale-0 group-hover:scale-100 transition-transform" />
           </motion.a>
 
-          <motion.a href="mailto:contact@example.com" className="group relative p-4" whileHover={{ scale: 1.1 }}>
+          <motion.a
+            href={`mailto:${profile?.email || "samrbit1.1@gmail.com"}?subject=Contact%20Request%20from%20Portfolio`}
+            className="group relative p-4"
+            whileHover={{ scale: 1.1 }}
+          >
             <FiMail className="text-3xl group-hover:text-primary transition-colors z-10 relative" />
             <div className="absolute inset-0 bg-primary/10 rounded-full scale-0 group-hover:scale-100 transition-transform" />
           </motion.a>
@@ -152,6 +195,5 @@ export default function Hero() {
         </div>
       </motion.div>
     </section>
-  )
+  );
 }
-

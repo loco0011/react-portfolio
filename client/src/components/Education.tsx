@@ -1,19 +1,53 @@
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
-
-const education = {
-  degree: "B.Tech in Computer Science & Engineering",
-  university: "Pailan College of Management and Technology",
-  duration: "2019 - 2023",
-  cgpa: "9.08",
-  achievements: [
-    "First Class with Distinction",
-    "Member of Technical Club",
-    "Core Member of the Sports Committee"
-  ]
-};
+import { useQuery } from "@tanstack/react-query";
+import { api } from "../lib/api"; // Adjust this import path to match your project structure
+import { Loader2 } from "lucide-react"; // For loading state
 
 export default function Education() {
+  // Fetch education data
+  const {
+    data: educationData,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["education"],
+    queryFn: api.getEducation,
+  });
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </div>
+    );
+  }
+
+  // Show error state
+  if (isError) {
+    return (
+      <div className="text-center text-red-500 py-20">
+        Failed to load education data. Please try again later.
+      </div>
+    );
+  }
+
+  // Handle empty state
+  if (!educationData || educationData.length === 0) {
+    return (
+      <div className="text-center text-gray-500 py-20">
+        No education data found.
+      </div>
+    );
+  }
+
+  // Use the first education entry (assuming it's the most recent/relevant)
+  const education = educationData[0];
+
+  // Calculate CGPA progress (assuming CGPA is out of 10)
+  const cgpaProgress = (parseFloat(education.cgpa) / 10) * 100;
+
   return (
     <section className="py-20 px-4 md:px-8 relative overflow-hidden" id="education">
       {/* Background gradient */}
@@ -37,8 +71,7 @@ export default function Education() {
           viewport={{ once: true }}
           transition={{ duration: 0.8, type: "spring" }}
         >
-          <Card className="backdrop-blur-sm bg-background/50 border-primary/20
-                        hover:shadow-lg hover:shadow-primary/20 transition-all duration-300">
+          <Card className="backdrop-blur-sm bg-background/50 border-primary/20 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300">
             <CardContent className="p-8">
               <motion.div
                 initial={{ y: 20, opacity: 0 }}
@@ -61,23 +94,23 @@ export default function Education() {
                     transition={{ delay: 0.4 }}
                     className="p-4 bg-primary/5 rounded-lg"
                   >
-                     <div className="p-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-foreground-800 font-medium">CGPA</span>
-                  <div className="flex items-center gap-3">
-                    <div className="w-32 h-2 bg-gray-400 rounded-full overflow-hidden">
-                      <motion.div
-                        className="h-full bg-gradient-to-r to-purple-800 from-black rounded-full"
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${(parseFloat(education.cgpa) / 10) * 100}%` }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.5, duration: 0.8 }}
-                      />
+                    <div className="p-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-foreground-800 font-medium">CGPA</span>
+                        <div className="flex items-center gap-3">
+                          <div className="w-32 h-2 bg-gray-400 rounded-full overflow-hidden">
+                            <motion.div
+                              className="h-full bg-gradient-to-r to-purple-800 from-black rounded-full"
+                              initial={{ width: 0 }}
+                              whileInView={{ width: `${cgpaProgress}%` }}
+                              viewport={{ once: true }}
+                              transition={{ delay: 0.5, duration: 0.8 }}
+                            />
+                          </div>
+                          <span className="font-bold text-lg">{education.cgpa}</span>
+                        </div>
+                      </div>
                     </div>
-                    <span className="font-bold text-lg">{education.cgpa}</span>
-                  </div>
-                </div>
-              </div>
                   </motion.div>
 
                   <div className="space-y-2">

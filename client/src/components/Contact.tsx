@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useToast } from "@/hooks/use-toast";
-import { Send, MessageSquare } from "lucide-react";
+import toast from "react-hot-toast"; // Changed to react-hot-toast
+import { Send, MessageSquare, Loader2 } from "lucide-react";
+import { api } from "@/lib/api";
+import { useMutation } from "@tanstack/react-query";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -18,18 +20,39 @@ const contactSchema = z.object({
 type ContactFormData = z.infer<typeof contactSchema>;
 
 export default function Contact() {
-  const { toast } = useToast();
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema)
   });
 
+  const contactMutation = useMutation({
+    mutationFn: api.submitContact,
+    onSuccess: () => {
+      toast.success("Thank you for your message. I'll get back to you soon.", {
+        duration: 5000,
+        position: "top-center",
+        style: {
+          background: '#333',
+          color: '#fff',
+          borderRadius: '10px',
+        },
+      });
+      form.reset();
+    },
+    onError: () => {
+      toast.error("Failed to send message. Please try again.", {
+        duration: 5000,
+        position: "top-center",
+        style: {
+          background: '#333',
+          color: '#fff',
+          borderRadius: '10px',
+        },
+      });
+    }
+  });
+
   const onSubmit = (data: ContactFormData) => {
-    console.log(data);
-    toast({
-      title: "Message sent!",
-      description: "Thank you for your message. I'll get back to you soon."
-    });
-    form.reset();
+    contactMutation.mutate(data);
   };
 
   return (
@@ -70,6 +93,7 @@ export default function Contact() {
                         placeholder="Your Name"
                         {...form.register("name")}
                         className="bg-background/10 border-primary/20 focus:border-primary transition-colors"
+                        disabled={contactMutation.isPending}
                       />
                       {form.formState.errors.name && (
                         <p className="text-sm text-destructive mt-1">
@@ -86,6 +110,7 @@ export default function Contact() {
                         placeholder="Your Email"
                         {...form.register("email")}
                         className="bg-background/10 border-primary/20 focus:border-primary transition-colors"
+                        disabled={contactMutation.isPending}
                       />
                       {form.formState.errors.email && (
                         <p className="text-sm text-destructive mt-1">
@@ -106,6 +131,7 @@ export default function Contact() {
                       placeholder="Your Message"
                       {...form.register("message")}
                       className="min-h-[150px] bg-background/10 border-primary/20 focus:border-primary transition-colors"
+                      disabled={contactMutation.isPending}
                     />
                     {form.formState.errors.message && (
                       <p className="text-sm text-destructive mt-1">
@@ -121,14 +147,24 @@ export default function Contact() {
                   viewport={{ once: true }}
                   className="flex justify-end"
                 >
-                <Button
+                  <Button
                     type="submit"
                     className="group relative overflow-hidden px-6 py-3 bg-background/10 hover:bg-background/20 transition-colors"
                     size="lg"
+                    disabled={contactMutation.isPending}
                   >
                     <span className="relative z-10 flex items-center gap-2">
-                      <span>Send Message</span>
-                      <Send className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                      {contactMutation.isPending ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Sending...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Send Message</span>
+                          <Send className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                        </>
+                      )}
                     </span>
                     <motion.div
                       className="absolute inset-0 bg-primary/20 gradient-bg"

@@ -1,26 +1,69 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { motion } from 'framer-motion';
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../store/authStore';
 import toast from 'react-hot-toast';
-import { Lock } from 'lucide-react';
+import { Lock, Loader2 } from 'lucide-react';
 
 export default function AdminLogin() {
-  const [email, setEmail] = useState('admin');
-  const [password, setPassword] = useState('admin');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const [, setLocation] = useLocation();
   const setAuthenticated = useAuthStore((state) => state.setAuthenticated);
 
+  // Check session on page load
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setAuthenticated(true);
+        setLocation('/admin/dashboard');
+      }
+    };
+
+    checkSession();
+  }, [setAuthenticated, setLocation]);
+
+  // Listen for auth state changes
+  useEffect(() => {
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        setAuthenticated(true);
+        setLocation('/admin/dashboard');
+      } else if (event === 'SIGNED_OUT') {
+        setAuthenticated(false);
+        setLocation('/admin/login');
+      }
+    });
+
+    // Cleanup listener on unmount
+    return () => {
+      subscription?.unsubscribe(); // Use the correct unsubscribe method
+    };
+  }, [setAuthenticated, setLocation]);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
-    if (email === 'admin' && password === 'admin') {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
       setAuthenticated(true);
-      toast.success('Welcome back, Admin!');
+      toast.success('Welcome back!');
       setLocation('/admin/dashboard');
-    } else {
+    } catch (error) {
       toast.error('Invalid credentials');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -45,13 +88,14 @@ export default function AdminLogin() {
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                Username
+                Email
               </label>
               <input
-                type="text"
+                type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+                required
               />
             </div>
 
@@ -64,14 +108,23 @@ export default function AdminLogin() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
+                required
               />
             </div>
 
             <button
               type="submit"
-              className="w-full py-3 px-4 bg-primary hover:bg-primary/90 text-white rounded-md transition-colors"
+              disabled={loading}
+              className="w-full py-3 px-4 bg-primary hover:bg-primary/90 text-white rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Sign In
+              {loading ? (
+                <div className="flex items-center justify-center">
+                  <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                  Signing in...
+                </div>
+              ) : (
+                'Sign In'
+              )}
             </button>
           </form>
         </div>

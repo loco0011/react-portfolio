@@ -14,7 +14,7 @@ export default function EasterEggGame() {
   const [isActive, setIsActive] = useState(false);
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
-  
+
   // Game state
   const gameStateRef = useRef({
     player: { x: 0, y: 0, width: 30, height: 30 },
@@ -27,25 +27,29 @@ export default function EasterEggGame() {
   useEffect(() => {
     let buffer = '';
     const secretCode = 'GAME';
-    
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!isActive) {
-        buffer += e.key.toUpperCase();
-        if (buffer.length > secretCode.length) {
-          buffer = buffer.substring(1);
+      if (!isActive && e.key) {
+        // Check if e.key exists and is a string
+        const key = typeof e.key === 'string' ? e.key.toUpperCase() : '';
+        if (key) {
+          buffer += key;
+          if (buffer.length > secretCode.length) {
+            buffer = buffer.substring(1);
+          }
+          if (buffer === secretCode) {
+            setIsActive(true);
+            setGameOver(false);
+            setScore(0);
+          }
         }
-        if (buffer === secretCode) {
-          setIsActive(true);
-          setGameOver(false);
-          setScore(0);
-        }
-      } else {
+      } else if (isActive && e.key) {
         gameStateRef.current.keysPressed.add(e.key);
       }
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
-      if (isActive) {
+      if (isActive && e.key) {
         gameStateRef.current.keysPressed.delete(e.key);
       }
     };
@@ -103,7 +107,7 @@ export default function EasterEggGame() {
       // Update and draw obstacles
       gameState.obstacles = gameState.obstacles.filter(obstacle => {
         obstacle.y += obstacle.speed || 3;
-        
+
         // Check collision
         if (
           gameState.player.x < obstacle.x + obstacle.width &&

@@ -3,53 +3,51 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FiGithub, FiExternalLink } from "react-icons/fi";
 import { useState } from "react";
-
-const projects = [
-  {
-    title: "Fintech Payment Gateway",
-    description: "Scalable payment processing system built with Node.js and TypeScript",
-    tech: ["Node.js", "TypeScript", "PostgreSQL"],
-    github: "https://github.com",
-    demo: "https://demo.com",
-    image: "payment-gateway.png"
-  },
-  {
-    title: "E-commerce Platform",
-    description: "Modern e-commerce solution with real-time inventory management",
-    tech: ["React", "Laravel", "MySQL"],
-    github: "https://github.com",
-    demo: "https://demo.com",
-    image: "ecommerce.png"
-  },
-  {
-    title: "AI Chat Application",
-    description: "Real-time chat application with AI-powered responses",
-    tech: ["Python", "TensorFlow", "WebSocket"],
-    github: "https://github.com",
-    demo: "https://demo.com",
-    image: "ai-chat.png"
-  },
-  {
-    title: "Blockchain Wallet",
-    description: "Secure cryptocurrency wallet with multi-chain support",
-    tech: ["Solidity", "Web3.js", "React"],
-    github: "https://github.com",
-    demo: "https://demo.com",
-    image: "blockchain.png"
-  },
-  {
-    title: "Social Media Dashboard",
-    description: "Analytics dashboard for social media management",
-    tech: ["Next.js", "D3.js", "Firebase"],
-    github: "https://github.com",
-    demo: "https://demo.com",
-    image: "dashboard.png"
-  }
-];
+import { api } from "../lib/api"; // Adjust this import path to match your project structure
+import { Loader2 } from "lucide-react"; // For loading state
+import { useQuery } from "@tanstack/react-query";
 
 export default function Projects() {
   const [showAll, setShowAll] = useState(false);
-  const displayedProjects = showAll ? projects : projects.slice(0, 2);
+
+  // Fetch projects data
+  const {
+    data: projectsData,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["projects"],
+    queryFn: api.getProjects,
+  });
+
+  // Handle loading and error states
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="text-center text-red-500 py-20">
+        Failed to load projects. Please try again later.
+      </div>
+    );
+  }
+
+  // Handle empty state
+  if (!projectsData || projectsData.length === 0) {
+    return (
+      <div className="text-center text-gray-500 py-20">
+        No projects found.
+      </div>
+    );
+  }
+
+  // Determine which projects to display
+  const displayedProjects = showAll ? projectsData : projectsData.slice(0, 2);
 
   return (
     <section className="py-20 px-4 md:px-8 relative overflow-hidden" id="projects">
@@ -70,15 +68,14 @@ export default function Projects() {
         <div className="grid md:grid-cols-2 gap-8">
           {displayedProjects.map((project, index) => (
             <motion.div
-              key={index}
+              key={project.id} // Use project.id as the key
               initial={{ opacity: 0, y: 20, rotateY: 30 }}
               whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
               whileHover={{ scale: 1.02, rotateY: 5 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.2 }}
             >
-              <Card className="h-full backdrop-blur-sm bg-background/50 border-primary/20
-                             hover:shadow-lg hover:shadow-primary/20 transition-all duration-300">
+              <Card className="h-full backdrop-blur-sm bg-background/50 border-primary/20 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300">
                 <CardHeader>
                   <CardTitle className="bg-clip-text bg-gradient-to-r from-primary to-purple-500">
                     {project.title}
@@ -139,7 +136,7 @@ export default function Projects() {
           ))}
         </div>
 
-        {!showAll && (
+        {!showAll && projectsData.length > 2 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

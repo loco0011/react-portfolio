@@ -1,7 +1,7 @@
 # Personal Portfolio Website
 
 ## 🌟 Overview
-A modern portfolio website built with **React** and **TypeScript**, featuring interactive animations and a sleek design. ** Supabase ** powers the website for backend services.
+A modern portfolio website built with **React** and **TypeScript**, featuring interactive animations and a sleek design. **Supabase** powers the website for backend services.
 
 ## 🛠️ Tech Stack
 ### 🎨 Frontend:
@@ -68,6 +68,5 @@ You can deploy the site using:
 ## 📜 License
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
-```
 🎉 **Happy Coding!** 🚀
 

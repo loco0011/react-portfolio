@@ -1,7 +1,7 @@
 # Personal Portfolio Website
 
 ## 🌟 Overview
-A modern portfolio website built with **React** and **TypeScript**, featuring interactive animations and a sleek design. The website is powered by **Supabase** for backend services.
+A modern portfolio website built with **React** and **TypeScript**, featuring interactive animations and a sleek design. **Supabase** powers the website for backend services.
 
 ## 🛠️ Tech Stack
 ### 🎨 Frontend:
@@ -55,19 +55,18 @@ Control the human (🧑) and dodge the falling bombs (💣) in this fast-paced s
    npm run dev  # or yarn dev
    ```
 
-## 🚀 Deployment
+## 🚀 Deployment(Free)
 You can deploy the site using:
 - ▲ **Vercel**
 - 🌍 **Netlify**
 
 ## 📬 Contact
 📌 **Portfolio** - [Your Portfolio URL](#)
-📌 **GitHub** - [@YourUsername](https://github.com/YourUsername)
-📌 **LinkedIn** - [Your LinkedIn](https://linkedin.com/in/YourLinkedIn)
+📌 **GitHub** - https://github.com/loco0011
+📌 **LinkedIn** - https://www.linkedin.com/in/sambitmaity/
 
 ## 📜 License
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
-```
 🎉 **Happy Coding!** 🚀
 

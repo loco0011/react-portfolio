@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -10,8 +10,8 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
   },
   headers: {
-    'Content-Type': 'application/json'
-  }
+    "Content-Type": "application/json",
+  },
 });
 
 // Types
@@ -80,21 +80,23 @@ export interface Contact {
   created_at?: string;
 }
 
-
 // Authentication check utility
 const checkAuth = async () => {
-    const { data: { user }, error } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
-    if (error) {
-      // Attempt token refresh
-      const { error: refreshError } = await supabase.auth.refreshSession();
-      if (refreshError) throw new Error('Session expired - please login again');
-      return checkAuth();
-    }
+  if (error) {
+    // Attempt token refresh
+    const { error: refreshError } = await supabase.auth.refreshSession();
+    if (refreshError) throw new Error("Session expired - please login again");
+    return checkAuth();
+  }
 
-    if (!user) throw new Error('Not authenticated');
-    return user;
-  };
+  if (!user) throw new Error("Not authenticated");
+  return user;
+};
 
 // Updated API Functions
 export const api = {
@@ -103,16 +105,17 @@ export const api = {
     const user = await checkAuth();
 
     const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
       .single();
 
     if (error) {
-      if (error.code === 'PGRST116') { // No rows found
+      if (error.code === "PGRST116") {
+        // No rows found
         // Create initial profile if missing
         const { data: newData } = await supabase
-          .from('profiles')
+          .from("profiles")
           .insert({ id: user.id })
           .select()
           .single();
@@ -122,8 +125,8 @@ export const api = {
     }
 
     // Ensure the title field is an array
-    if (data.title && typeof data.title === 'string') {
-      data.title = data.title.split('/').map((title: string) => title.trim());
+    if (data.title && typeof data.title === "string") {
+      data.title = data.title.split("/").map((title: string) => title.trim());
     }
 
     return data;
@@ -139,9 +142,9 @@ export const api = {
     };
 
     const { data, error } = await supabase
-      .from('profiles')
+      .from("profiles")
       .update(updatedProfile)
-      .eq('id', user.id)
+      .eq("id", user.id)
       .select()
       .single();
 
@@ -154,54 +157,56 @@ export const api = {
     const user = await checkAuth();
 
     const { data, error } = await supabase
-      .from('experiences')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
+      .from("experiences")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
 
     if (error) throw error;
     return data;
   },
 
-  addExperience: async (experience: Omit<Experience, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
-    console.log('Experience data being sent:', experience); // Debugging line
+  addExperience: async (
+    experience: Omit<Experience, "id" | "user_id" | "created_at" | "updated_at">
+  ) => {
+    console.log("Experience data being sent:", experience); // Debugging line
 
     const user = await checkAuth();
 
     const { data, error } = await supabase
-      .from('experiences')
+      .from("experiences")
       .insert({
         ...experience,
         user_id: user.id,
         achievements: Array.isArray(experience.achievements)
           ? experience.achievements
-          : experience.achievements?.split(',').map(a => a.trim()) || [],
+          : experience.achievements?.split(",").map((a) => a.trim()) || [],
         location: experience.location || null,
-        description: experience.description || null
+        description: experience.description || null,
       })
       .select()
       .single();
 
     if (error) {
-      console.error('Detailed error:', error);
+      console.error("Detailed error:", error);
       throw new Error(`Failed to add experience: ${error.message}`);
     }
     return data;
   },
 
-
   updateExperience: async (id: string, experience: Partial<Experience>) => {
     const user = await checkAuth();
 
-    const achievements = experience.achievements && Array.isArray(experience.achievements)
-      ? experience.achievements
-      : experience.achievements?.split(',').map(a => a.trim());
+    const achievements =
+      experience.achievements && Array.isArray(experience.achievements)
+        ? experience.achievements
+        : experience.achievements?.split(",").map((a) => a.trim());
 
     const { data, error } = await supabase
-      .from('experiences')
+      .from("experiences")
       .update({ ...experience, achievements })
-      .eq('id', id)
-      .eq('user_id', user.id)
+      .eq("id", id)
+      .eq("user_id", user.id)
       .select()
       .single();
 
@@ -213,10 +218,10 @@ export const api = {
     const user = await checkAuth();
 
     const { error } = await supabase
-      .from('experiences')
+      .from("experiences")
       .delete()
-      .eq('id', id)
-      .eq('user_id', user.id);
+      .eq("id", id)
+      .eq("user_id", user.id);
 
     if (error) throw error;
   },
@@ -226,24 +231,26 @@ export const api = {
     const user = await checkAuth();
 
     const { data, error } = await supabase
-      .from('education')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
+      .from("education")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
 
     if (error) throw error;
     return data;
   },
 
-  addEducation: async (education: Omit<Education, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
+  addEducation: async (
+    education: Omit<Education, "id" | "user_id" | "created_at" | "updated_at">
+  ) => {
     const user = await checkAuth();
 
     const achievements = Array.isArray(education.achievements)
       ? education.achievements
-      : education.achievements?.split(',').map(a => a.trim()) || [];
+      : education.achievements?.split(",").map((a) => a.trim()) || [];
 
     const { data, error } = await supabase
-      .from('education')
+      .from("education")
       .insert({ ...education, user_id: user.id, achievements })
       .select()
       .single();
@@ -255,15 +262,16 @@ export const api = {
   updateEducation: async (id: string, education: Partial<Education>) => {
     const user = await checkAuth();
 
-    const achievements = education.achievements && Array.isArray(education.achievements)
-      ? education.achievements
-      : education.achievements?.split(',').map(a => a.trim());
+    const achievements =
+      education.achievements && Array.isArray(education.achievements)
+        ? education.achievements
+        : education.achievements?.split(",").map((a) => a.trim());
 
     const { data, error } = await supabase
-      .from('education')
+      .from("education")
       .update({ ...education, achievements })
-      .eq('id', id)
-      .eq('user_id', user.id)
+      .eq("id", id)
+      .eq("user_id", user.id)
       .select()
       .single();
 
@@ -275,10 +283,10 @@ export const api = {
     const user = await checkAuth();
 
     const { error } = await supabase
-      .from('education')
+      .from("education")
       .delete()
-      .eq('id', id)
-      .eq('user_id', user.id);
+      .eq("id", id)
+      .eq("user_id", user.id);
 
     if (error) throw error;
   },
@@ -288,20 +296,22 @@ export const api = {
     const user = await checkAuth();
 
     const { data, error } = await supabase
-      .from('skills')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
+      .from("skills")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
 
     if (error) throw error;
     return data;
   },
 
-  addSkill: async (skill: Omit<Skill, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
+  addSkill: async (
+    skill: Omit<Skill, "id" | "user_id" | "created_at" | "updated_at">
+  ) => {
     const user = await checkAuth();
 
     const { data, error } = await supabase
-      .from('skills')
+      .from("skills")
       .insert({ ...skill, user_id: user.id })
       .select()
       .single();
@@ -314,10 +324,10 @@ export const api = {
     const user = await checkAuth();
 
     const { data, error } = await supabase
-      .from('skills')
+      .from("skills")
       .update(skill)
-      .eq('id', id)
-      .eq('user_id', user.id)
+      .eq("id", id)
+      .eq("user_id", user.id)
       .select()
       .single();
 
@@ -329,10 +339,10 @@ export const api = {
     const user = await checkAuth();
 
     const { error } = await supabase
-      .from('skills')
+      .from("skills")
       .delete()
-      .eq('id', id)
-      .eq('user_id', user.id);
+      .eq("id", id)
+      .eq("user_id", user.id);
 
     if (error) throw error;
   },
@@ -342,24 +352,26 @@ export const api = {
     const user = await checkAuth();
 
     const { data, error } = await supabase
-      .from('projects')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
+      .from("projects")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
 
     if (error) throw error;
     return data;
   },
 
-  addProject: async (project: Omit<Project, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
+  addProject: async (
+    project: Omit<Project, "id" | "user_id" | "created_at" | "updated_at">
+  ) => {
     const user = await checkAuth();
 
     const tech = Array.isArray(project.tech)
       ? project.tech
-      : project.tech?.split(',').map(t => t.trim()) || [];
+      : project.tech?.split(",").map((t) => t.trim()) || [];
 
     const { data, error } = await supabase
-      .from('projects')
+      .from("projects")
       .insert({ ...project, user_id: user.id, tech })
       .select()
       .single();
@@ -371,15 +383,16 @@ export const api = {
   updateProject: async (id: string, project: Partial<Project>) => {
     const user = await checkAuth();
 
-    const tech = project.tech && Array.isArray(project.tech)
-      ? project.tech
-      : project.tech?.split(',').map(t => t.trim());
+    const tech =
+      project.tech && Array.isArray(project.tech)
+        ? project.tech
+        : project.tech?.split(",").map((t) => t.trim());
 
     const { data, error } = await supabase
-      .from('projects')
+      .from("projects")
       .update({ ...project, tech })
-      .eq('id', id)
-      .eq('user_id', user.id)
+      .eq("id", id)
+      .eq("user_id", user.id)
       .select()
       .single();
 
@@ -391,35 +404,156 @@ export const api = {
     const user = await checkAuth();
 
     const { error } = await supabase
-      .from('projects')
+      .from("projects")
       .delete()
-      .eq('id', id)
-      .eq('user_id', user.id);
+      .eq("id", id)
+      .eq("user_id", user.id);
 
     if (error) throw error;
   },
   // Add these to your api object
-submitContact: async (contact: Omit<Contact, 'id' | 'created_at'>) => {
-  const { data, error } = await supabase
-    .from('contacts')
-    .insert(contact)
-    .select()
-    .single();
+  submitContact: async (contact: Omit<Contact, "id" | "created_at">) => {
+    const { data, error } = await supabase
+      .from("contacts")
+      .insert(contact)
+      .select()
+      .single();
 
-  if (error) throw error;
-  return data;
-},
+    if (error) throw error;
+    return data;
+  },
 
-getContacts: async () => {
-  const user = await checkAuth();
+  getContacts: async () => {
+    const user = await checkAuth();
 
-  const { data, error } = await supabase
-    .from('contacts')
-    .select('*')
-    .order('created_at', { ascending: false });
+    const { data, error } = await supabase
+      .from("contacts")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-  if (error) throw error;
-  return data;
-}
+    if (error) throw error;
+    return data;
+  },
 
+  getMetrics: async () => {
+    const { data, error } = await supabase
+      .from("metrics")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    return data;
+  },
+
+  addMetric: async (metricData: any) => {
+    const { data, error } = await supabase
+      .from("metrics")
+      .insert(metricData)
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  updateMetric: async (id: string, metricData: any) => {
+    const { data, error } = await supabase
+      .from("metrics")
+      .update(metricData)
+      .eq("id", id)
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  deleteMetric: async (id: string) => {
+    const { error } = await supabase.from("metrics").delete().eq("id", id);
+
+    if (error) throw error;
+    return true;
+  },
+
+  getLogo: async () => {
+    try {
+      console.log("Fetching logo data...");
+
+      const { data, error } = await supabase
+        .from("logos")
+        .select("storage_path, file_name")
+        .order("created_at", { ascending: false })
+        .maybeSingle();
+
+      if (error) {
+        console.error("Error fetching logo:", error);
+        return null;
+      }
+
+      console.log("Fetched logo data:", data);
+      return data;
+    } catch (error) {
+      console.error("Error in getLogo:", error);
+      return null;
+    }
+  },
+
+  uploadLogo: async (file: File) => {
+    try {
+      // Check existing logo
+      const { data: existing } = await supabase
+        .from("logos")
+        .select("*")
+        .maybeSingle();
+
+      // Delete existing logo if it exists
+      if (existing) {
+        // Delete from storage
+        await supabase.storage.from("logos").remove([existing.storage_path]);
+
+        // Delete from database
+        await supabase.from("logos").delete().eq("id", existing.id);
+      }
+
+      // Generate unique filename
+      const fileName = `logo-${Date.now()}.png`;
+
+      // Upload new file
+      const { error: uploadError } = await supabase.storage
+        .from("logos")
+        .upload(fileName, file, {
+          contentType: "image/png",
+          upsert: false,
+        });
+
+      if (uploadError) throw uploadError;
+
+      // Insert new record
+      const { data, error: insertError } = await supabase
+        .from("logos")
+        .insert({
+          file_name: fileName,
+          storage_path: fileName,
+        })
+        .select()
+        .single();
+
+      if (insertError) {
+        // Cleanup uploaded file on db error
+        await supabase.storage.from("logos").remove([fileName]);
+        throw insertError;
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Logo upload error:", error);
+      throw error;
+    }
+  },
+
+  getLogoUrl: (storagePath: string) => {
+    if (!storagePath) return null;
+
+    const { data } = supabase.storage.from("logos").getPublicUrl(storagePath);
+
+    return data.publicUrl;
+  },
 };

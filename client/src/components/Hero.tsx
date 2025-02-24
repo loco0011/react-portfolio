@@ -3,44 +3,22 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
-import { api } from "../lib/api"; // Import the API functions
 
-export default function Hero() {
-  const [profile, setProfile] = useState(null); // State to store profile data
-  const [isLoading, setIsLoading] = useState(true); // Loading state
-  const [isError, setIsError] = useState(false); // Error state
-
+export default function Hero({ profileData }) {
   const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState("");
   const [isTypingComplete, setIsTypingComplete] = useState(false);
 
-  // Fetch profile data from the API
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const data = await api.getProfile(); // Fetch profile data
-        setProfile(data); // Set the fetched profile data
-        setIsLoading(false); // Data fetching is complete
-      } catch (error) {
-        console.error("Failed to fetch profile data:", error);
-        setIsError(true); // Set error state
-        setIsLoading(false); // Data fetching is complete (with error)
-      }
-    };
-
-    fetchProfile();
-  }, []);
-
   // Typing effect logic
   useEffect(() => {
-    if (!profile || !profile.title) return; // Don't run the effect if profile or title is not fetched yet
+    if (!profileData || !profileData.title) return;
 
-    if (currentRoleIndex >= profile.title.length) {
+    if (currentRoleIndex >= profileData.title.length) {
       setCurrentRoleIndex(0);
       return;
     }
 
-    const currentRole = profile.title[currentRoleIndex];
+    const currentRole = profileData.title[currentRoleIndex];
 
     if (displayedText.length < currentRole.length) {
       const timeoutId = setTimeout(() => {
@@ -56,25 +34,7 @@ export default function Hero() {
       }, 2000); // Wait time before moving to next role
       return () => clearTimeout(timeoutId);
     }
-  }, [currentRoleIndex, displayedText, profile]);
-
-  // Show loading state
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" />
-      </div>
-    );
-  }
-
-  // Show error state
-  if (isError) {
-    return (
-      <div className="text-center text-red-500 py-20">
-        Failed to load profile data. Please try again later.
-      </div>
-    );
-  }
+  }, [currentRoleIndex, displayedText, profileData]);
 
   return (
     <section
@@ -112,7 +72,7 @@ export default function Hero() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          Hi, I'm {profile?.full_name || "Sambit"}
+          Hi, I'm {profileData?.full_name || "Sambit"}
         </motion.h1>
 
         <div className="h-20 mb-12 flex items-center justify-center">
@@ -146,7 +106,7 @@ export default function Hero() {
           transition={{ delay: 0.6 }}
         >
           <motion.a
-            href={profile?.github || "https://github.com/loco0011"}
+            href={profileData?.github || "https://github.com/loco0011"}
             target="_blank"
             rel="noopener noreferrer"
             className="group relative p-4"
@@ -157,7 +117,7 @@ export default function Hero() {
           </motion.a>
 
           <motion.a
-            href={profile?.linkedin || "https://www.linkedin.com/in/sambitmaity/"}
+            href={profileData?.linkedin || "https://www.linkedin.com/in/sambitmaity/"}
             target="_blank"
             rel="noopener noreferrer"
             className="group relative p-4"
@@ -168,7 +128,7 @@ export default function Hero() {
           </motion.a>
 
           <motion.a
-            href={`mailto:${profile?.email || "samrbit1.1@gmail.com"}?subject=Contact%20Request%20from%20Portfolio`}
+            href={`mailto:${profileData?.email || "samrbit1.1@gmail.com"}?subject=Contact%20Request%20from%20Portfolio`}
             className="group relative p-4"
             whileHover={{ scale: 1.1 }}
           >

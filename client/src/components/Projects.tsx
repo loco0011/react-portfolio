@@ -20,15 +20,77 @@ export default function Projects() {
     queryFn: api.getProjects,
   });
 
-  // Handle loading and error states
+  // Show loading state
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
+      <section className="py-20 px-4 md:px-8 relative overflow-hidden" id="projects">
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/5 to-background" />
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="max-w-6xl mx-auto relative z-10"
+        >
+          <h2 className="text-5xl font-bold mb-12 text-center bg-clip-text text-transparent heading-gradient">
+            Featured Projects
+          </h2>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {[0, 1].map((index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20, rotateY: 30 }}
+                whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.2 }}
+              >
+                <Card className="h-full backdrop-blur-sm bg-background/50 border-primary/20">
+                  <CardHeader>
+                    <div className="h-8 bg-primary/10 rounded-full w-3/4 mb-4" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="h-4 bg-primary/10 rounded w-full" />
+                      <div className="h-4 bg-primary/10 rounded w-5/6" />
+                      <div className="h-4 bg-primary/10 rounded w-3/4" />
+                    </div>
+
+                    <div className="flex flex-wrap gap-2 my-6">
+                      {[0, 1, 2].map((techIndex) => (
+                        <div
+                          key={techIndex}
+                          className="h-6 bg-primary/10 rounded-full w-16"
+                        />
+                      ))}
+                    </div>
+
+                    <div className="flex gap-4">
+                      <div className="h-10 bg-primary/10 rounded w-24" />
+                      <div className="h-10 bg-primary/10 rounded w-24" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Animated Spinner overlay */}
+        <div className="absolute inset-0 bg-background/50 backdrop-blur-sm flex items-center justify-center">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          >
+            <Loader2 className="w-8 h-8 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent" />
+          </motion.div>
+        </div>
+      </section>
     );
   }
 
+  // Show error state
   if (isError) {
     return (
       <div className="text-center text-red-500 py-20">

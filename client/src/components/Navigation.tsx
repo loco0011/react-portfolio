@@ -2,16 +2,17 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import { api } from "@/lib/api";
 
 const navItems = [
   { label: "Home", href: "#hero" },
   { label: "Experience", href: "#experience" },
   { label: "Skills", href: "#skills" },
   { label: "Projects", href: "#projects" },
-  { label: "Education", href: "#education" }
+  { label: "Education", href: "#education" },
 ];
 
-export default function Navigation() {
+export default function Navigation({ logoData }) {
   const [isOpen, setIsOpen] = useState(false);
 
   const scrollToSection = (href: string) => {
@@ -20,6 +21,30 @@ export default function Navigation() {
       element.scrollIntoView({ behavior: "smooth" });
     }
     setIsOpen(false);
+  };
+
+  const renderLogo = () => {
+    if (!logoData?.storage_path) {
+      return (
+        <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500">
+          SM
+        </span>
+      );
+    }
+
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <img
+          src={api.getLogoUrl(logoData.storage_path)}
+          alt="Logo"
+          className="w-8 h-8 rounded-full object-cover"
+        />
+      </motion.div>
+    );
   };
 
   return (
@@ -31,13 +56,13 @@ export default function Navigation() {
         className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b dark:border-white/10"
       >
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <motion.span
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500"
+            className="relative"
           >
-            SM
-          </motion.span>
+            {renderLogo()}
+          </motion.div>
 
           <div className="hidden md:flex gap-8">
             {navItems.map((item, index) => (

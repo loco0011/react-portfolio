@@ -22,7 +22,26 @@ export default function EasterEggGame() {
     animationFrameId: 0,
     keysPressed: new Set<string>(),
     lastObstacleTime: 0,
+    baseSpeed: 3,
   });
+
+  // Initialize game state when game starts
+  useEffect(() => {
+    if (isActive && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const gameState = gameStateRef.current;
+      gameState.player = {
+        x: canvas.width / 2 - 15,
+        y: canvas.height - 50,
+        width: 30,
+        height: 30,
+      };
+      gameState.obstacles = [];
+      gameState.lastObstacleTime = 0;
+      gameState.baseSpeed = 3;
+      setScore(0);
+    }
+  }, [isActive]);
 
   useEffect(() => {
     let buffer = '';
@@ -30,7 +49,6 @@ export default function EasterEggGame() {
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isActive && e.key) {
-        // Check if e.key exists and is a string
         const key = typeof e.key === 'string' ? e.key.toUpperCase() : '';
         if (key) {
           buffer += key;
@@ -70,16 +88,7 @@ export default function EasterEggGame() {
     const ctx = canvas.getContext('2d')!;
     const gameState = gameStateRef.current;
 
-    // Initialize player position
-    gameState.player = {
-      x: canvas.width / 2 - 15,
-      y: canvas.height - 50,
-      width: 30,
-      height: 30
-    };
-
     const updateGame = () => {
-      // Clear canvas
       ctx.fillStyle = '#000033';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -94,12 +103,13 @@ export default function EasterEggGame() {
       // Generate new obstacles
       const now = Date.now();
       if (now - gameState.lastObstacleTime > 1000) {
+        const speed = gameState.baseSpeed + Math.floor(score / 5);
         gameState.obstacles.push({
           x: Math.random() * (canvas.width - 20),
           y: -20,
           width: 20,
           height: 20,
-          speed: 3 + Math.random() * 2
+          speed: speed,
         });
         gameState.lastObstacleTime = now;
       }
@@ -119,9 +129,10 @@ export default function EasterEggGame() {
           return false;
         }
 
-        // Draw obstacle
+        // Draw bomb icon
+        ctx.font = '20px Arial';
         ctx.fillStyle = '#FF0000';
-        ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+        ctx.fillText('💣', obstacle.x, obstacle.y + obstacle.height);
 
         // Remove if out of screen
         if (obstacle.y > canvas.height) {
@@ -131,14 +142,10 @@ export default function EasterEggGame() {
         return true;
       });
 
-      // Draw player
+      // Draw human icon
+      ctx.font = '24px Arial';
       ctx.fillStyle = '#00FF00';
-      ctx.fillRect(
-        gameState.player.x,
-        gameState.player.y,
-        gameState.player.width,
-        gameState.player.height
-      );
+      ctx.fillText('🧑', gameState.player.x, gameState.player.y + gameState.player.height);
 
       // Draw score
       ctx.fillStyle = '#FFFFFF';
@@ -180,6 +187,18 @@ export default function EasterEggGame() {
               <p className="text-xl text-white mb-6">Score: {score}</p>
               <button
                 onClick={() => {
+                  const canvas = canvasRef.current;
+                  if (canvas) {
+                    gameStateRef.current.player = {
+                      x: canvas.width / 2 - 15,
+                      y: canvas.height - 50,
+                      width: 30,
+                      height: 30,
+                    };
+                    gameStateRef.current.obstacles = [];
+                    gameStateRef.current.lastObstacleTime = 0;
+                    gameStateRef.current.baseSpeed = 3;
+                  }
                   setGameOver(false);
                   setScore(0);
                 }}

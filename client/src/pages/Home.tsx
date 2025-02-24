@@ -98,7 +98,6 @@ export default function Home() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="space-y-20 pb-20"
       >
         <Hero profileData={profileData} />
         <Experience />

@@ -102,12 +102,10 @@ const checkAuth = async () => {
 export const api = {
   // Profile
   getProfile: async () => {
-    const user = await checkAuth();
 
     const { data, error } = await supabase
       .from("profiles")
       .select("*")
-      .eq("id", user.id)
       .single();
 
     if (error) {
@@ -116,7 +114,6 @@ export const api = {
         // Create initial profile if missing
         const { data: newData } = await supabase
           .from("profiles")
-          .insert({ id: user.id })
           .select()
           .single();
         return newData;
@@ -154,12 +151,10 @@ export const api = {
 
   // Experiences
   getExperiences: async () => {
-    const user = await checkAuth();
 
     const { data, error } = await supabase
       .from("experiences")
       .select("*")
-      .eq("user_id", user.id)
       .order("created_at", { ascending: false });
 
     if (error) throw error;
@@ -228,12 +223,10 @@ export const api = {
 
   // Education
   getEducation: async () => {
-    const user = await checkAuth();
 
     const { data, error } = await supabase
       .from("education")
       .select("*")
-      .eq("user_id", user.id)
       .order("created_at", { ascending: false });
 
     if (error) throw error;
@@ -293,12 +286,10 @@ export const api = {
 
   // Skills
   getSkills: async () => {
-    const user = await checkAuth();
 
     const { data, error } = await supabase
       .from("skills")
       .select("*")
-      .eq("user_id", user.id)
       .order("created_at", { ascending: false });
 
     if (error) throw error;
@@ -349,12 +340,10 @@ export const api = {
 
   // Projects
   getProjects: async () => {
-    const user = await checkAuth();
 
     const { data, error } = await supabase
       .from("projects")
       .select("*")
-      .eq("user_id", user.id)
       .order("created_at", { ascending: false });
 
     if (error) throw error;

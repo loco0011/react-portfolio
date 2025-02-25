@@ -234,12 +234,12 @@ CREATE TRIGGER update_contacts_updated_at
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at();
 
-CREATE TRIGGER update_metrics_updated_at
-  BEFORE UPDATE ON metrics
+CREATE TRIGGER update_logos_updated_at
+  BEFORE UPDATE ON logos
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at();
 
-CREATE TRIGGER update_logos_updated_at
-  BEFORE UPDATE ON logos
+CREATE TRIGGER update_metrics_updated_at
+  BEFORE UPDATE ON metrics
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at();

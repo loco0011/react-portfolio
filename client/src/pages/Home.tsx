@@ -26,14 +26,16 @@ export default function Home() {
   const [loadingMessage, setLoadingMessage] = useState("");
 
   useEffect(() => {
-    setLoadingMessage(loadingMessages[Math.floor(Math.random() * loadingMessages.length)]);
+    setLoadingMessage(
+      loadingMessages[Math.floor(Math.random() * loadingMessages.length)]
+    );
   }, []);
 
   // Fetch logo data
   const {
     data: logoData,
     isLoading: isLogoLoading,
-    isError: isLogoError
+    isError: isLogoError,
   } = useQuery({
     queryKey: ["logo"],
     queryFn: api.getLogo,
@@ -43,7 +45,7 @@ export default function Home() {
   const {
     data: profileData,
     isLoading: isProfileLoading,
-    isError: isProfileError
+    isError: isProfileError,
   } = useQuery({
     queryKey: ["profile"],
     queryFn: api.getProfile,
@@ -76,9 +78,17 @@ export default function Home() {
   // Show error state
   if (isLogoError || isProfileError) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-background z-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-black z-50">
         <div className="flex flex-col items-center gap-4">
-          <p className="text-red-500">Failed to load data. Please refresh the page.</p>
+          <p className="text-red-800 w-85 m-3 text-center text-2xl font-bold animate-pulse">
+            🚨 Oooopsieee! Somethin' ain't right! 😵‍💫
+            <br />
+            We're on it, patching things up! 🛠️💨
+            <br />
+            Meanwhile... wanna have some fun? 🎮 Just type{" "}
+            <span className="text-yellow-500">"game"</span> on your keyboard &
+            see the magic! ✨
+          </p>
           <button
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"

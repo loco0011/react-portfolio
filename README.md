@@ -24,6 +24,7 @@ A modern portfolio website built with **React** and **TypeScript**, featuring in
 - 🔐 **Contact form with Supabase integration**
 - 🌙 **Dark/Light theme support**
 - ⚡ **Optimized performance**
+- 💻 **Admin panel for seamless content updates**
 
 ## 🎮 Dodge-and-Survive
 Control the human (🧑) and dodge the falling bombs (💣) in this fast-paced survival game! Survive as long as you can, earn points, and beat your high score as the bombs fall faster and faster! 🎮💥
@@ -43,7 +44,7 @@ Control the human (🧑) and dodge the falling bombs (💣) in this fast-paced s
 ### 🛠 Installation
 1. **Clone the repository:**
    ```sh
-   git clone https://github.com/YourUsername/your-portfolio.git
+   git clone https://github.com/loco0011/react-portfolio.git
    ```
 2. **Install dependencies:**
    ```sh
@@ -61,7 +62,7 @@ You can deploy the site using:
 - 🌍 **Netlify**
 
 ## 📬 Contact
-📌 **Portfolio** - [Your Portfolio URL](#)
+📌 **Portfolio** - https://sambit-maity.netlify.app/
 📌 **GitHub** - https://github.com/loco0011
 📌 **LinkedIn** - https://www.linkedin.com/in/sambitmaity/
 

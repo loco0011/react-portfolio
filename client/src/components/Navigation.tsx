@@ -1,8 +1,11 @@
-import { motion } from "framer-motion";
-import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, PlayCircle } from "lucide-react";
 import { api } from "@/lib/api";
+
+// Add this import to your file
+import EasterEggGame from "./EasterEggGame"; // Adjust the path as needed
 
 const navItems = [
   { label: "Home", href: "#hero" },
@@ -14,6 +17,9 @@ const navItems = [
 
 export default function Navigation({ logoData }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [showGameDropdown, setShowGameDropdown] = useState(false);
+  const [gameActive, setGameActive] = useState(false);
+  const simulateKeyPressRef = useRef<() => void | null>(null);
 
   const scrollToSection = (href: string) => {
     const element = document.querySelector(href);
@@ -23,12 +29,63 @@ export default function Navigation({ logoData }) {
     setIsOpen(false);
   };
 
+  const toggleGameDropdown = () => {
+    setShowGameDropdown(!showGameDropdown);
+  };
+
+  // This function simulates typing the "GAME" secret code to activate the game
+  const simulateGameKeyPress = () => {
+    // Create sequence of key events for "G", "A", "M", "E"
+    const keys = ["G", "A", "M", "E"];
+    let index = 0;
+
+    const typeNextKey = () => {
+      if (index < keys.length) {
+        // Create and dispatch keydown event
+        const keyEvent = new KeyboardEvent("keydown", {
+          key: keys[index],
+          code: `Key${keys[index]}`,
+          bubbles: true
+        });
+        document.dispatchEvent(keyEvent);
+
+        // Move to next key
+        index++;
+        setTimeout(typeNextKey, 100);
+      }
+    };
+
+    // Store the function in ref so we can call it from other places
+    simulateKeyPressRef.current = typeNextKey;
+
+    // Start the key press simulation
+    typeNextKey();
+  };
+
+  const startGame = () => {
+    setShowGameDropdown(false);
+    setGameActive(true);
+
+    // Simulate typing "GAME" to trigger the Easter egg
+    if (simulateKeyPressRef.current) {
+      simulateKeyPressRef.current();
+    } else {
+      simulateGameKeyPress();
+    }
+  };
+
   const renderLogo = () => {
     if (!logoData?.storage_path) {
       return (
-        <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500">
-          SM
-        </span>
+        <div className="relative">
+          <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-primary rounded-full blur-md opacity-70 animate-pulse"></div>
+          <button
+            onClick={toggleGameDropdown}
+            className="relative flex items-center justify-center w-10 h-10 rounded-full bg-black text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500"
+          >
+            SM
+          </button>
+        </div>
       );
     }
 
@@ -37,12 +94,19 @@ export default function Navigation({ logoData }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
+        className="relative"
       >
-        <img
-          src={api.getLogoUrl(logoData.storage_path)}
-          alt="Logo"
-          className="w-10 h-10 rounded-full object-cover"
-        />
+        <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-primary rounded-full blur-md opacity-70 animate-pulse"></div>
+        <button
+          onClick={toggleGameDropdown}
+          className="relative block w-10 h-10 rounded-full border border-primary/50 overflow-hidden"
+        >
+          <img
+            src={api.getLogoUrl(logoData.storage_path)}
+            alt="Logo"
+            className="w-full h-full object-cover"
+          />
+        </button>
       </motion.div>
     );
   };
@@ -62,6 +126,55 @@ export default function Navigation({ logoData }) {
             className="relative"
           >
             {renderLogo()}
+
+            {/* Game Dropdown */}
+            <AnimatePresence>
+              {showGameDropdown && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                  transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                  className="absolute top-12 left-0 origin-top-left z-50"
+                >
+                  <div className="w-64 bg-black border border-primary/20 backdrop-blur-xl rounded-lg overflow-hidden shadow-lg shadow-primary/20">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-purple-500/10 opacity-50"></div>
+
+                    {/* Neon border effect */}
+                    <div className="absolute inset-0 rounded-lg border border-primary opacity-25 shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]"></div>
+
+                    <div className="relative p-4">
+                      <div className="mb-3 text-center">
+                        <motion.div
+                          animate={{
+                            textShadow: ["0 0 4px #fff, 0 0 10px var(--primary)", "0 0 4px #fff, 0 0 5px var(--primary)"],
+                          }}
+                          transition={{
+                            duration: 1.5,
+                            repeat: Infinity,
+                            repeatType: "reverse"
+                          }}
+                          className="text-lg font-bold text-white"
+                        >
+                        🎮 Bored? Tap & Play! 🚀
+                        </motion.div>
+                        <p className="text-sm text-gray-300 mt-1">⚡ Quick feet or defeat? 💥</p>
+                      </div>
+
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={startGame}
+                        className="w-full py-2 flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-purple-600 rounded-md text-white font-medium shadow-lg shadow-primary/25"
+                      >
+                        <PlayCircle size={18} />
+                        <span>Play Game</span>
+                      </motion.button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
 
           <div className="hidden md:flex gap-8">
@@ -115,6 +228,9 @@ export default function Navigation({ logoData }) {
           </div>
         </motion.div>
       )}
+
+      {/* Include the easter egg game component */}
+      <EasterEggGame />
     </>
   );
 }

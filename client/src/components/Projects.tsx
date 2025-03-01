@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { FiGithub, FiExternalLink } from "react-icons/fi";
 import { useState } from "react";
 import { api } from "../lib/api"; // Adjust this import path to match your project structure
-import { Loader2 } from "lucide-react"; // For loading state
 import { useQuery } from "@tanstack/react-query";
 
 export default function Projects() {
@@ -29,7 +28,6 @@ export default function Projects() {
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
           transition={{ duration: 0.8 }}
           className="max-w-6xl mx-auto relative z-10"
         >
@@ -41,9 +39,8 @@ export default function Projects() {
             {[0, 1].map((index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 20, rotateY: 30 }}
-                whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
-                viewport={{ once: true }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.2 }}
               >
                 <Card className="h-full backdrop-blur-sm bg-background/50 border-primary/20">
@@ -76,16 +73,6 @@ export default function Projects() {
             ))}
           </div>
         </motion.div>
-
-        {/* Animated Spinner overlay */}
-        <div className="absolute inset-0 bg-background/50 backdrop-blur-sm flex items-center justify-center">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          >
-            <Loader2 className="w-8 h-8 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent" />
-          </motion.div>
-        </div>
       </section>
     );
   }
@@ -119,34 +106,55 @@ export default function Projects() {
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
         transition={{ duration: 0.8 }}
         className="max-w-6xl mx-auto relative z-10"
       >
-        <h2 className="text-5xl font-bold mb-12 text-center bg-clip-text text-transparent heading-gradient">
+        {/* Title fade-in */}
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-5xl font-bold mb-12 text-center bg-clip-text text-transparent heading-gradient"
+        >
           Featured Projects
-        </h2>
+        </motion.h2>
 
         <div className="grid md:grid-cols-2 gap-8">
           {displayedProjects.map((project, index) => (
             <motion.div
               key={project.id} // Use project.id as the key
-              initial={{ opacity: 0, y: 20, rotateY: 30 }}
-              whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
-              whileHover={{ scale: 1.02, rotateY: 5 }}
-              viewport={{ once: true }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.2 }}
             >
               <Card className="h-full backdrop-blur-sm bg-background/50 border-primary/20 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300">
                 <CardHeader>
-                  <CardTitle className="bg-clip-text bg-gradient-to-r from-primary to-purple-500">
-                    {project.title}
-                  </CardTitle>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    <CardTitle className="bg-clip-text bg-gradient-to-r from-primary to-purple-500">
+                      {project.title}
+                    </CardTitle>
+                  </motion.div>
                 </CardHeader>
                 <CardContent>
-                  <p className="mb-4 text-foreground/80">{project.description}</p>
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="mb-4 text-foreground/80"
+                  >
+                    {project.description}
+                  </motion.p>
 
-                  <div className="flex flex-wrap gap-2 mb-6">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="flex flex-wrap gap-2 mb-6"
+                  >
                     {project.tech.map((tech, techIndex) => (
                       <span
                         key={techIndex}
@@ -155,9 +163,14 @@ export default function Projects() {
                         {tech}
                       </span>
                     ))}
-                  </div>
+                  </motion.div>
 
-                  <div className="flex gap-4">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                    className="flex gap-4"
+                  >
                     <Button
                       variant="outline"
                       size="sm"
@@ -191,7 +204,7 @@ export default function Projects() {
                         <div className="absolute inset-0 bg-primary/20 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
                       </a>
                     </Button>
-                  </div>
+                  </motion.div>
                 </CardContent>
               </Card>
             </motion.div>
@@ -200,9 +213,9 @@ export default function Projects() {
 
         {!showAll && projectsData.length > 2 && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
             className="flex justify-center mt-12"
           >
             <Button

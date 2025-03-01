@@ -1,19 +1,23 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+"use client"
+
+import type React from "react"
+
+import { motion, AnimatePresence } from "framer-motion"
+import { useEffect, useRef, useState } from "react"
 
 interface GameObject {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  speed?: number;
+  x: number
+  y: number
+  width: number
+  height: number
+  speed?: number
 }
 
 export default function EasterEggGame() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isActive, setIsActive] = useState(false);
-  const [score, setScore] = useState(0);
-  const [gameOver, setGameOver] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [isActive, setIsActive] = useState(false)
+  const [score, setScore] = useState(0)
+  const [gameOver, setGameOver] = useState(false)
 
   // Game state
   const gameStateRef = useRef({
@@ -23,100 +27,117 @@ export default function EasterEggGame() {
     keysPressed: new Set<string>(),
     lastObstacleTime: 0,
     baseSpeed: 3,
-  });
+  })
 
   // Initialize game state when game starts
   useEffect(() => {
     if (isActive && canvasRef.current) {
-      const canvas = canvasRef.current;
-      const gameState = gameStateRef.current;
+      const canvas = canvasRef.current
+      const gameState = gameStateRef.current
       gameState.player = {
         x: canvas.width / 2 - 15,
         y: canvas.height - 50,
         width: 30,
         height: 30,
-      };
-      gameState.obstacles = [];
-      gameState.lastObstacleTime = 0;
-      gameState.baseSpeed = 3;
-      setScore(0);
+      }
+      gameState.obstacles = []
+      gameState.lastObstacleTime = 0
+      gameState.baseSpeed = 3
+      setScore(0)
     }
-  }, [isActive]);
+  }, [isActive])
 
   useEffect(() => {
-    let buffer = '';
-    const secretCode = 'GAME';
+    let buffer = ""
+    const secretCode = "GAME"
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isActive && e.key) {
-        const key = typeof e.key === 'string' ? e.key.toUpperCase() : '';
+        const key = typeof e.key === "string" ? e.key.toUpperCase() : ""
         if (key) {
-          buffer += key;
+          buffer += key
           if (buffer.length > secretCode.length) {
-            buffer = buffer.substring(1);
+            buffer = buffer.substring(1)
           }
           if (buffer === secretCode) {
-            setIsActive(true);
-            setGameOver(false);
-            setScore(0);
+            setIsActive(true)
+            setGameOver(false)
+            setScore(0)
           }
         }
       } else if (isActive && e.key) {
-        gameStateRef.current.keysPressed.add(e.key);
+        gameStateRef.current.keysPressed.add(e.key)
       }
-    };
+    }
 
     const handleKeyUp = (e: KeyboardEvent) => {
       if (isActive && e.key) {
-        gameStateRef.current.keysPressed.delete(e.key);
+        gameStateRef.current.keysPressed.delete(e.key)
       }
-    };
+    }
 
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener("keydown", handleKeyDown)
+    window.addEventListener("keyup", handleKeyUp)
 
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
-    };
-  }, [isActive]);
+    if (!isActive) {
+      const handleTouchStart = () => {
+        buffer += "G"
+        if (buffer.length > secretCode.length) {
+          buffer = buffer.substring(1)
+        }
+        if (buffer === secretCode) {
+          setIsActive(true)
+          setGameOver(false)
+          setScore(0)
+        }
+      }
+
+      window.addEventListener("touchstart", handleTouchStart)
+
+      return () => {
+        window.removeEventListener("keydown", handleKeyDown)
+        window.removeEventListener("keyup", handleKeyUp)
+        window.removeEventListener("touchstart", handleTouchStart)
+      }
+    }
+  }, [isActive])
 
   useEffect(() => {
-    if (!isActive || !canvasRef.current) return;
+    if (!isActive || !canvasRef.current) return
 
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d')!;
-    const gameState = gameStateRef.current;
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext("2d")!
+    const gameState = gameStateRef.current
 
     const updateGame = () => {
-      ctx.fillStyle = '#000033';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#000033"
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
 
       // Update player position
-      if (gameState.keysPressed.has('ArrowLeft')) {
-        gameState.player.x = Math.max(0, gameState.player.x - 5);
+      if (gameState.keysPressed.has("ArrowLeft")) {
+        gameState.player.x = Math.max(0, gameState.player.x - 5)
       }
-      if (gameState.keysPressed.has('ArrowRight')) {
-        gameState.player.x = Math.min(canvas.width - gameState.player.width, gameState.player.x + 5);
+      if (gameState.keysPressed.has("ArrowRight")) {
+        gameState.player.x = Math.min(canvas.width - gameState.player.width, gameState.player.x + 5)
       }
 
       // Generate new obstacles
-      const now = Date.now();
+      const now = Date.now()
       if (now - gameState.lastObstacleTime > 1000) {
-        const speed = gameState.baseSpeed + Math.floor(score / 5);
+        const speed = gameState.baseSpeed + Math.floor(score / 5)
         gameState.obstacles.push({
           x: Math.random() * (canvas.width - 20),
           y: -20,
           width: 20,
           height: 20,
           speed: speed,
-        });
-        gameState.lastObstacleTime = now;
+        })
+        gameState.lastObstacleTime = now
       }
 
       // Update and draw obstacles
-      gameState.obstacles = gameState.obstacles.filter(obstacle => {
-        obstacle.y += obstacle.speed || 3;
+      gameState.obstacles = gameState.obstacles.filter((obstacle) => {
+        obstacle.y += obstacle.speed || 3
 
         // Check collision
         if (
@@ -125,46 +146,76 @@ export default function EasterEggGame() {
           gameState.player.y < obstacle.y + obstacle.height &&
           gameState.player.y + gameState.player.height > obstacle.y
         ) {
-          setGameOver(true);
-          return false;
+          setGameOver(true)
+          return false
         }
 
         // Draw bomb icon
-        ctx.font = '20px Arial';
-        ctx.fillStyle = '#FF0000';
-        ctx.fillText('💣', obstacle.x, obstacle.y + obstacle.height);
+        ctx.font = "20px Arial"
+        ctx.fillStyle = "#FF0000"
+        ctx.fillText("💣", obstacle.x, obstacle.y + obstacle.height)
 
         // Remove if out of screen
         if (obstacle.y > canvas.height) {
-          setScore(prev => prev + 1);
-          return false;
+          setScore((prev) => prev + 1)
+          return false
         }
-        return true;
-      });
+        return true
+      })
 
       // Draw human icon
-      ctx.font = '24px Arial';
-      ctx.fillStyle = '#00FF00';
-      ctx.fillText('🧑', gameState.player.x, gameState.player.y + gameState.player.height);
+      ctx.font = "24px Arial"
+      ctx.fillStyle = "#00FF00"
+      ctx.fillText("🧑", gameState.player.x, gameState.player.y + gameState.player.height)
 
       // Draw score
-      ctx.fillStyle = '#FFFFFF';
-      ctx.font = '20px Arial';
-      ctx.fillText(`Score: ${score}`, 10, 30);
+      ctx.fillStyle = "#FFFFFF"
+      ctx.font = "20px Arial"
+      ctx.fillText(`Score: ${score}`, 10, 30)
 
       if (!gameOver) {
-        gameState.animationFrameId = requestAnimationFrame(updateGame);
+        gameState.animationFrameId = requestAnimationFrame(updateGame)
       }
-    };
+    }
 
-    gameState.animationFrameId = requestAnimationFrame(updateGame);
+    gameState.animationFrameId = requestAnimationFrame(updateGame)
 
     return () => {
-      cancelAnimationFrame(gameState.animationFrameId);
-    };
-  }, [isActive, gameOver, score]);
+      cancelAnimationFrame(gameState.animationFrameId)
+    }
+  }, [isActive, gameOver, score])
 
-  if (!isActive) return null;
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length > 0) {
+      const touch = e.touches[0]
+      const canvas = canvasRef.current
+      if (canvas) {
+        const rect = canvas.getBoundingClientRect()
+        const touchX = touch.clientX - rect.left
+        gameStateRef.current.player.x = Math.max(
+          0,
+          Math.min(canvas.width - gameStateRef.current.player.width, touchX - gameStateRef.current.player.width / 2),
+        )
+      }
+    }
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (e.touches.length > 0) {
+      const touch = e.touches[0]
+      const canvas = canvasRef.current
+      if (canvas) {
+        const rect = canvas.getBoundingClientRect()
+        const touchX = touch.clientX - rect.left
+        gameStateRef.current.player.x = Math.max(
+          0,
+          Math.min(canvas.width - gameStateRef.current.player.width, touchX - gameStateRef.current.player.width / 2),
+        )
+      }
+    }
+  }
+
+  if (!isActive) return null
 
   return (
     <AnimatePresence>
@@ -175,11 +226,16 @@ export default function EasterEggGame() {
         className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
       >
         <div className="relative">
+          <div className="absolute top-2 left-0 right-0 text-center text-white text-sm md:hidden">
+            Tap and drag to move
+          </div>
           <canvas
             ref={canvasRef}
             width={400}
             height={600}
             className="border-2 border-primary rounded-lg"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
           />
           {gameOver && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 rounded-lg">
@@ -187,20 +243,20 @@ export default function EasterEggGame() {
               <p className="text-xl text-white mb-6">Score: {score}</p>
               <button
                 onClick={() => {
-                  const canvas = canvasRef.current;
+                  const canvas = canvasRef.current
                   if (canvas) {
                     gameStateRef.current.player = {
                       x: canvas.width / 2 - 15,
                       y: canvas.height - 50,
                       width: 30,
                       height: 30,
-                    };
-                    gameStateRef.current.obstacles = [];
-                    gameStateRef.current.lastObstacleTime = 0;
-                    gameStateRef.current.baseSpeed = 3;
+                    }
+                    gameStateRef.current.obstacles = []
+                    gameStateRef.current.lastObstacleTime = 0
+                    gameStateRef.current.baseSpeed = 3
                   }
-                  setGameOver(false);
-                  setScore(0);
+                  setGameOver(false)
+                  setScore(0)
                 }}
                 className="px-4 py-2 bg-primary rounded-lg text-white hover:bg-primary/80 transition-colors"
               >
@@ -217,5 +273,6 @@ export default function EasterEggGame() {
         </div>
       </motion.div>
     </AnimatePresence>
-  );
+  )
 }
+

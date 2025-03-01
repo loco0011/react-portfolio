@@ -38,7 +38,6 @@ export default function Experience() {
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
           className="max-w-6xl mx-auto relative z-10"
         >
           <h2 className="text-5xl font-bold mb-16 text-center bg-clip-text text-transparent heading-gradient">
@@ -53,7 +52,6 @@ export default function Experience() {
                 key={index}
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
                 transition={{ delay: index * 0.2 }}
                 className="mb-20"
               >
@@ -111,16 +109,6 @@ export default function Experience() {
             ))}
           </div>
         </motion.div>
-
-        {/* Animated Spinner overlay */}
-        <div className="absolute inset-0 bg-background/50 backdrop-blur-sm flex items-center justify-center">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          >
-            <Loader2 className="w-8 h-8 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent" />
-          </motion.div>
-        </div>
       </section>
     );
   }
@@ -150,7 +138,6 @@ export default function Experience() {
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
         className="max-w-6xl mx-auto relative z-10"
       >
         <h2 className="text-5xl font-bold mb-16 text-center bg-clip-text text-transparent heading-gradient">
@@ -165,7 +152,6 @@ export default function Experience() {
               key={exp.id}
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
               transition={{ delay: index * 0.2 }}
               className="mb-20"
             >
@@ -194,21 +180,46 @@ export default function Experience() {
                     <CardContent className="p-8">
                       <div className="grid md:grid-cols-2 gap-8">
                         <div>
-                          <motion.h3 className="text-2xl font-bold mb-2 bg-clip-text bg-gradient-to-r from-primary to-purple-500">
+                          <motion.h3
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 }}
+                            className="text-2xl font-bold mb-2 bg-clip-text bg-gradient-to-r from-primary to-purple-500"
+                          >
                             {exp.title}
                           </motion.h3>
-                          <p className="text-lg text-gray-800 dark:text-white/90">
+                          <motion.p
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4 }}
+                            className="text-lg text-gray-800 dark:text-white/90"
+                          >
                             {exp.company}{" "}
                             <span className="text-sm dark:text-white/70">({exp.duration})</span>
-                          </p>
-                          <p className="text-lg mb-4 text-gray-800 dark:text-white/80">
+                          </motion.p>
+                          <motion.p
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.5 }}
+                            className="text-lg mb-4 text-gray-800 dark:text-white/80"
+                          >
                             <span className="text-sm">{exp.location}</span>
-                          </p>
-                          <p className="text-gray-600 dark:text-white/60 mb-6">
+                          </motion.p>
+                          <motion.p
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.6 }}
+                            className="text-gray-600 dark:text-white/60 mb-6"
+                          >
                             {exp.description}
-                          </p>
+                          </motion.p>
 
-                          <div className="flex flex-wrap gap-2 mb-4">
+                          <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.7 }}
+                            className="flex flex-wrap gap-2 mb-4"
+                          >
                             {exp.tech?.map((tech, i) => (
                               <span
                                 key={i}
@@ -217,15 +228,13 @@ export default function Experience() {
                                 {tech}
                               </span>
                             ))}
-                          </div>
+                          </motion.div>
                         </div>
 
                         <motion.div
                           initial={{ opacity: 0, x: 20 }}
-                          animate={{
-                            opacity: activeIndex === index ? 1 : 0.7,
-                            x: 0,
-                          }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.8 }}
                           className="space-y-4"
                         >
                           <h4 className="font-bold text-lg mb-4 text-foreground/90 dark:text-white/90">
@@ -235,7 +244,7 @@ export default function Experience() {
                             <motion.div
                               key={i}
                               initial={{ x: -20, opacity: 0 }}
-                              animate={{ x: 0, opacity: 1 }}
+                              whileInView={{ x: 0, opacity: 1 }}
                               transition={{ delay: i * 0.1 }}
                               className="flex items-center gap-3"
                             >

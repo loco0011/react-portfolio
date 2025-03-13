@@ -1,10 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, PlayCircle } from "lucide-react";
 import { api } from "@/lib/api";
-
-// Add this import to your file
 import EasterEggGame from "./EasterEggGame"; // Adjust the path as needed
 
 const navItems = [
@@ -19,7 +17,38 @@ export default function Navigation({ logoData }) {
   const [isOpen, setIsOpen] = useState(false);
   const [showGameDropdown, setShowGameDropdown] = useState(false);
   const [gameActive, setGameActive] = useState(false);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
   const simulateKeyPressRef = useRef<() => void | null>(null);
+
+  // Track active section using Intersection Observer
+  useEffect(() => {
+    const sections = document.querySelectorAll("section");
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: "0px",
+        threshold: 0.5, // Adjust this threshold as needed
+      }
+    );
+
+    sections.forEach((section) => {
+      observer.observe(section);
+    });
+
+    return () => {
+      sections.forEach((section) => {
+        observer.unobserve(section);
+      });
+    };
+  }, []);
 
   const scrollToSection = (href: string) => {
     const element = document.querySelector(href);
@@ -33,32 +62,24 @@ export default function Navigation({ logoData }) {
     setShowGameDropdown(!showGameDropdown);
   };
 
-  // This function simulates typing the "GAME" secret code to activate the game
   const simulateGameKeyPress = () => {
-    // Create sequence of key events for "G", "A", "M", "E"
     const keys = ["G", "A", "M", "E"];
     let index = 0;
 
     const typeNextKey = () => {
       if (index < keys.length) {
-        // Create and dispatch keydown event
         const keyEvent = new KeyboardEvent("keydown", {
           key: keys[index],
           code: `Key${keys[index]}`,
-          bubbles: true
+          bubbles: true,
         });
         document.dispatchEvent(keyEvent);
-
-        // Move to next key
         index++;
         setTimeout(typeNextKey, 100);
       }
     };
 
-    // Store the function in ref so we can call it from other places
     simulateKeyPressRef.current = typeNextKey;
-
-    // Start the key press simulation
     typeNextKey();
   };
 
@@ -66,7 +87,6 @@ export default function Navigation({ logoData }) {
     setShowGameDropdown(false);
     setGameActive(true);
 
-    // Simulate typing "GAME" to trigger the Easter egg
     if (simulateKeyPressRef.current) {
       simulateKeyPressRef.current();
     } else {
@@ -127,7 +147,6 @@ export default function Navigation({ logoData }) {
           >
             {renderLogo()}
 
-            {/* Game Dropdown */}
             <AnimatePresence>
               {showGameDropdown && (
                 <motion.div
@@ -139,10 +158,7 @@ export default function Navigation({ logoData }) {
                 >
                   <div className="w-64 bg-black border border-primary/20 backdrop-blur-xl rounded-lg overflow-hidden shadow-lg shadow-primary/20">
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-purple-500/10 opacity-50"></div>
-
-                    {/* Neon border effect */}
                     <div className="absolute inset-0 rounded-lg border border-primary opacity-25 shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]"></div>
-
                     <div className="relative p-4">
                       <div className="mb-3 text-center">
                         <motion.div
@@ -152,11 +168,11 @@ export default function Navigation({ logoData }) {
                           transition={{
                             duration: 1.5,
                             repeat: Infinity,
-                            repeatType: "reverse"
+                            repeatType: "reverse",
                           }}
                           className="text-lg font-bold text-white"
                         >
-                        🎮 Bored? Tap & Play! 🚀
+                          🎮 Bored? Tap & Play! 🚀
                         </motion.div>
                         <p className="text-sm text-gray-300 mt-1">⚡ Quick feet or defeat? 💥</p>
                       </div>
@@ -184,11 +200,17 @@ export default function Navigation({ logoData }) {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="text-sm header-text font-medium hover:text-primary transition-colors relative group"
+                className={`text-sm header-text font-medium hover:text-primary transition-colors relative group ${
+                  activeSection === item.href.slice(1) ? "text-primary" : ""
+                }`}
                 onClick={() => scrollToSection(item.href)}
               >
                 {item.label}
-                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform" />
+                <span
+                  className={`absolute -bottom-1 left-0 w-full h-0.5 bg-primary scale-x-0 ${
+                    activeSection === item.href.slice(1) ? "scale-x-100" : "group-hover:scale-x-100"
+                  } transition-transform`}
+                />
               </motion.button>
             ))}
           </div>
@@ -204,7 +226,6 @@ export default function Navigation({ logoData }) {
         </div>
       </motion.nav>
 
-      {/* Mobile Menu */}
       {isOpen && (
         <motion.div
           initial={{ opacity: 0, x: -100 }}
@@ -229,7 +250,6 @@ export default function Navigation({ logoData }) {
         </motion.div>
       )}
 
-      {/* Include the easter egg game component */}
       <EasterEggGame />
     </>
   );

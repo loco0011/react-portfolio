@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 export default function ThemeToggle() {
   const [theme, setTheme] = useState(() => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("theme") || 
+      return localStorage.getItem("theme") ||
         (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
     }
     return "light";
@@ -38,18 +38,18 @@ export default function ThemeToggle() {
       >
         <motion.div
           initial={{ scale: 0.5, rotate: 0 }}
-          animate={{ 
+          animate={{
             scale: 1,
-            rotate: theme === "light" ? 0 : 180
+            rotate: theme === "light" ? 0 : 360
           }}
-          transition={{ 
+          transition={{
             type: "spring",
             stiffness: 200,
             damping: 10
           }}
         >
-          {theme === "light" ? 
-            <Sun className="h-5 w-5 text-yellow-500" /> : 
+          {theme === "light" ?
+            <Sun className="h-5 w-5 text-yellow-500" /> :
             <Moon className="h-5 w-5 text-blue-400" />
           }
         </motion.div>

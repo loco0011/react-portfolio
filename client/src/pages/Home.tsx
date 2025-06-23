@@ -7,9 +7,10 @@ import Education from "@/components/Education";
 import Contact from "@/components/Contact";
 import Navigation from "@/components/Navigation";
 import ThemeToggle from "@/components/ThemeToggle";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
 import { useEffect, useState } from "react";
+import { sendAdminAlert } from "@/lib/sendAdminAlert";
 
 export default function Home() {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
@@ -58,6 +59,12 @@ export default function Home() {
     }
   }, [isLogoLoading, isProfileLoading]);
 
+  const notifyAdminSilently = useMutation({
+    mutationFn: sendAdminAlert,
+    onSuccess: () => {},
+    onError: () => {},
+  });
+
   // Show loading state
   if (isInitialLoad) {
     return (
@@ -94,6 +101,15 @@ export default function Home() {
             className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
           >
             Retry
+          </button>
+          <button
+            onClick={() => {
+              notifyAdminSilently.mutate();
+              window.open("https://sambitmaity.netlify.app/", "_blank");
+            }}
+            className="px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 transition-colors"
+          >
+            Visit Old Site
           </button>
         </div>
       </div>

@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import toast from "react-hot-toast"; // Changed to react-hot-toast
-import { Send, MessageSquare, Loader2 } from "lucide-react";
+import { Send, MessageSquare, Loader2, Mail, Phone } from "lucide-react";
 import { api } from "@/lib/api";
 import { useMutation } from "@tanstack/react-query";
 
@@ -181,10 +181,28 @@ export default function Contact() {
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
-                className="mt-12 flex items-center justify-center gap-2 text-text-secondary"
+                className="mt-12 flex flex-col items-center justify-center gap-3 text-text-secondary"
               >
-                <MessageSquare className="w-5 h-5" />
-                <span>Average response time: 24 hours</span>
+                <div className="flex items-center gap-2">
+                  <MessageSquare className="w-5 h-5" />
+                  <span>Average response time: 24 hours</span>
+                </div>
+                <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
+                  <a
+                    href="mailto:official.sambitmaity@gmail.com"
+                    className="flex items-center gap-1.5 hover:text-accent transition-colors"
+                  >
+                    <Mail className="w-4 h-4" />
+                    <span>official.sambitmaity@gmail.com</span>
+                  </a>
+                  <a
+                    href="tel:+917478123847"
+                    className="flex items-center gap-1.5 hover:text-accent transition-colors"
+                  >
+                    <Phone className="w-4 h-4" />
+                    <span>+91 7478123847</span>
+                  </a>
+                </div>
               </motion.div>
             </CardContent>
           </Card>

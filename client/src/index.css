@@ -39,6 +39,7 @@
     --text-secondary: #000408;
     --bg-gradient-start: #ffffff;
     --bg-gradient-end: #f1f5f9;
+    --border: 213 60% 82%;
   }
 
   .dark {
@@ -84,8 +85,45 @@
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500;
   }
+  @keyframes glitch-1 {
+    0%, 87%, 100% { clip-path: inset(0 0 100% 0); opacity: 0; transform: translate(0); }
+    88%  { clip-path: inset(18% 0 58% 0); opacity: 0.8; transform: translate(-3px, 1px); }
+    90%  { clip-path: inset(62% 0 12% 0); opacity: 0.8; transform: translate(3px, -1px); }
+    92%  { clip-path: inset(38% 0 40% 0); opacity: 0.8; transform: translate(-2px, 0); }
+    94%  { clip-path: inset(78% 0 4%  0); opacity: 0.8; transform: translate(2px, 1px); }
+  }
+  @keyframes glitch-2 {
+    0%, 87%, 100% { clip-path: inset(0 0 100% 0); opacity: 0; transform: translate(0); }
+    89%  { clip-path: inset(52% 0 22% 0); opacity: 0.65; transform: translate(3px, -1px); }
+    91%  { clip-path: inset(12% 0 68% 0); opacity: 0.65; transform: translate(-3px, 1px); }
+    93%  { clip-path: inset(82% 0 2%  0); opacity: 0.65; transform: translate(2px, 0); }
+    95%  { clip-path: inset(28% 0 52% 0); opacity: 0.65; transform: translate(-2px, -1px); }
+  }
+  .glitch-name { position: relative; }
+  .glitch-name::before,
+  .glitch-name::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .glitch-name::before {
+    background-image: linear-gradient(to right, #c084fc, #a78bfa);
+    animation: glitch-1 7s infinite;
+  }
+  .glitch-name::after {
+    background-image: linear-gradient(to right, #f472b6, #a78bfa);
+    animation: glitch-2 7s infinite;
+  }
+
   .dark .title-gradient{
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500;
+    background-image: linear-gradient(to right, #a78bfa, #bda8d2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   .light .title-gradient{
     @apply bg-clip-text text-transparent bg-gradient-to-b from-purple-500 to-black;
@@ -139,8 +177,9 @@
   }
 }
 .dark .exp-bg {
-  @apply bg-gray-800 bg-opacity-80;
+  background-color: rgb(10 12 16 / 32%);
 }
 .light .exp-bg {
   @apply bg-gray-300 bg-opacity-60;
+  border: 1px solid rgb(147 197 253 / 50%);
 }

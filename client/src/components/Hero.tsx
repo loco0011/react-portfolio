@@ -9,16 +9,30 @@ export default function Hero({ profileData }) {
   const [displayedText, setDisplayedText] = useState("");
   const [isTypingComplete, setIsTypingComplete] = useState(false);
 
+  const titles =
+    profileData?.title?.length > 0
+      ? profileData.title
+      : [
+          "Full Stack Developer",
+          "React Developer",
+          "Node.js Developer",
+          "DevOps Engineer",
+          "Laravel Developer",
+          "Software Engineer",
+          "Automation Engineer",
+          "UI/UX Enthusiast",
+        ];
+
   // Typing effect logic
   useEffect(() => {
-    if (!profileData || !profileData.title) return;
+    if (!titles || titles.length === 0) return;
 
-    if (currentRoleIndex >= profileData.title.length) {
+    if (currentRoleIndex >= titles.length) {
       setCurrentRoleIndex(0);
       return;
     }
 
-    const currentRole = profileData.title[currentRoleIndex];
+    const currentRole = titles[currentRoleIndex];
 
     if (displayedText.length < currentRole.length) {
       const timeoutId = setTimeout(() => {
@@ -34,7 +48,7 @@ export default function Hero({ profileData }) {
       }, 2000); // Wait time before moving to next role
       return () => clearTimeout(timeoutId);
     }
-  }, [currentRoleIndex, displayedText, profileData]);
+  }, [currentRoleIndex, displayedText, titles]);
 
   return (
     <section
@@ -56,7 +70,7 @@ export default function Hero({ profileData }) {
             repeat: Number.POSITIVE_INFINITY,
             ease: "linear",
           }}
-          className="w-[500px] h-[500px] rounded-full bg-primary/20 filter blur-3xl"
+          className="w-[250px] h-[250px] rounded-full bg-primary/20 filter blur-3xl"
         />
       </div>
 
@@ -67,7 +81,8 @@ export default function Hero({ profileData }) {
         transition={{ duration: 0.8 }}
       >
         <motion.h1
-          className="text-6xl md:text-7xl font-bold mb-8 bg-clip-text title-gradient"
+          className="text-6xl md:text-7xl font-bold mb-8 bg-clip-text title-gradient glitch-name"
+          data-text={`Hi, I'm ${profileData?.full_name || "Sambit"}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
@@ -82,20 +97,25 @@ export default function Hero({ profileData }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="relative font-mono dark:text-white text-xl"
+            className="flex items-center gap-2 text-xl"
+            style={{ fontFamily: "'Courier New', Courier, 'Lucida Console', monospace", letterSpacing: "0.05em" }}
           >
-            {displayedText}
-            <motion.span
-              animate={{ opacity: isTypingComplete ? [0, 1] : 0 }}
-              transition={{
-                duration: 0.5,
-                repeat: isTypingComplete ? Number.POSITIVE_INFINITY : 0,
-                repeatType: "reverse",
-              }}
-              className="absolute"
-            >
-              |
-            </motion.span>
+            <span className="text-primary font-bold select-none">{"<"}</span>
+            <span className="text-black dark:text-white font-semibold tracking-widest uppercase text-sm">
+              {displayedText}
+              <motion.span
+                animate={{ opacity: isTypingComplete ? [0, 1] : 0 }}
+                transition={{
+                  duration: 0.5,
+                  repeat: isTypingComplete ? Number.POSITIVE_INFINITY : 0,
+                  repeatType: "reverse",
+                }}
+                className="inline-block text-primary ml-0.5"
+              >
+                |
+              </motion.span>
+            </span>
+            <span className="text-primary font-bold select-none">{"/>"}</span>
           </motion.div>
         </div>
 
